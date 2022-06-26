@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const formationSchema = new mongoose.Schema({
+const courseSchema = new mongoose.Schema({
     title: {
         type: String,
         required:true
@@ -38,4 +38,4 @@ const formationSchema = new mongoose.Schema({
 },{timestamps : true});
 
 
-module.exports = mongoose.model('Formation', formationSchema);
+module.exports = mongoose.model('Course', courseSchema);

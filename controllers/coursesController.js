@@ -1,83 +1,83 @@
-const Formation = require('../models/formation')
+const Formation = require('../models/course')
 const mongoose = require('mongoose')
 
-// get all formations
-const getFormations = async (req, res) => {
-    const formation = await Formation.find({}).sort({createdAt: -1})
+// get all formation
+const getCourses = async (req, res) => {
+    const courses = await Formation.find({}).sort({createdAt: -1})
 
-    res.status(200).json(formation)
+    res.status(200).json(courses)
 }
 
 // get a single formation
-const getFormation = async (req, res) => {
+const getCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: 'No such workout'})
     }
 
-    const formation = await Formation.findById(id)
+    const course = await Formation.findById(id)
 
-    if (!formation) {
+    if (!course) {
         return res.status(404).json({error: 'No such workout'})
     }
 
-    res.status(200).json(formation)
+    res.status(200).json(course)
 }
 
 // create a new formation
-const createFormation = async (req, res) => {
+const createCourse = async (req, res) => {
     const {title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais} = req.body
 
     // add to the database
     try {
-        const formation = await Formation.create({title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais})
-        res.status(200).json(formation)
+        const course = await Formation.create({title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais})
+        res.status(200).json(course)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
 }
 
 // delete a formation
-const deleteFormation = async (req, res) => {
+const deleteCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({error: 'No such workout'})
     }
 
-    const formation = await Formation.findOneAndDelete({_id: id})
+    const course = await Formation.findOneAndDelete({_id: id})
 
-    if(!formation) {
+    if(!course) {
         return res.status(400).json({error: 'No such workout'})
     }
 
-    res.status(200).json("delete with success",formation)
+    res.status(200).json(course)
 }
 
 // update a formation
-const updateFormation = async (req, res) => {
+const updateCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({error: 'No such workout'})
     }
 
-    const formation = await Formation.findOneAndUpdate({_id: id}, {
+    const course = await Formation.findOneAndUpdate({_id: id}, {
         ...req.body
     })
 
-    if (!formation) {
+    if (!course) {
         return res.status(400).json({error: 'No such workout'})
     }
 
-    res.status(200).json(formation)
+    res.status(200).json(course)
 }
 
 module.exports = {
-    getFormations,
-    getFormation,
-    createFormation,
-    deleteFormation,
-    updateFormation
+    getCourses,
+    getCourse,
+    createCourse,
+    deleteCourse,
+    updateCourse
 }
