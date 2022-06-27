@@ -1,5 +1,7 @@
 const Formation = require('../models/course')
 const Formateur = require('../models/formateur')
+const Apprenant = require('../models/apprenant')
+
 const mongoose = require('mongoose')
 
 // get all formation
@@ -98,6 +100,10 @@ const updateCourse = async (req, res) => {
 
     res.status(200).json(course)
 }
+
+
+
+
 
 
 
