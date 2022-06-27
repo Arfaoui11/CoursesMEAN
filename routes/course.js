@@ -3,6 +3,7 @@ const {
     getCourses,
     getCourse,
     createCourse,
+    createCourseAndAssignToFormer,
     deleteCourse,
     updateCourse
 } = require('../controllers/coursesController')
@@ -10,18 +11,20 @@ const {
 const router = express.Router()
 
 // GET all formations
-router.get('/', getCourses)
+router.get('/courses/', getCourses)
 
 // GET a single formation
-router.get('/:id', getCourse)
+router.get('/courses/:id', getCourse)
 
 // POST a new formation
-router.post('/', createCourse)
+router.post('/courses/', createCourse)
+
+router.post('/courses/:id',createCourseAndAssignToFormer)
 
 // DELETE a formation
-router.delete('/:id', deleteCourse)
+router.delete('/courses/:id', deleteCourse)
 
 // UPDATE a formation
-router.patch('/:id', updateCourse)
+router.patch('/courses/:id', updateCourse)
 
 module.exports = router

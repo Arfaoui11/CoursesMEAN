@@ -1,4 +1,5 @@
 const Formation = require('../models/course')
+const Formateur = require('../models/formateur')
 const mongoose = require('mongoose')
 
 // get all formation
@@ -37,6 +38,30 @@ const createCourse = async (req, res) => {
         res.status(400).json({ error: error.message })
     }
 }
+const createCourseAndAssignToFormer = async (req, res) => {
+    // find out which post you are commenting
+    const id = req.params.id;
+    const {title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais} = req.body
+    // get the comment text and record post id
+    try {
+        const course = await Formation({title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais,formateur: id})
+
+        // save comment
+        await course.save();
+        // get this particular post
+        const formateur = await Formateur.findById(id);
+        // push the comment into the post.comments array
+        formateur.formations.push(course);
+        // save and redirect...
+        await formateur.save()
+        res.status(200).json(course)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+
+}
+
+
 
 // delete a formation
 const deleteCourse = async (req, res) => {
@@ -74,10 +99,15 @@ const updateCourse = async (req, res) => {
     res.status(200).json(course)
 }
 
+
+
+
+
 module.exports = {
     getCourses,
     getCourse,
     createCourse,
+    createCourseAndAssignToFormer,
     deleteCourse,
     updateCourse
 }

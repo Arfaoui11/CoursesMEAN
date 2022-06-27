@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const formationSchema = new mongoose.Schema({
-    formationRoutes: {
+const formateurSchema = new mongoose.Schema({
+    nom: {
         type: String,
         required: 'This field is required.'
     },
@@ -12,10 +12,14 @@ const formationSchema = new mongoose.Schema({
         type: Number
     },
     email: {
-        type: Number
-    }
+        type: String
+    },
+    formations :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Course"
+    }]
 });
 
 
 
-module.exports = mongoose.model('Formateur', formationSchema);
+module.exports = mongoose.model('Formateur', formateurSchema);
