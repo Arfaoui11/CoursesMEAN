@@ -2,7 +2,8 @@ const express = require('express')
 const {
     getUsers,
     getUser,
-    createUser,
+    createUserApp,
+    createUserFormer,
     deleteUser,
     updateUser
 } = require('../controllers/userController')
@@ -16,7 +17,7 @@ router.get('/user/', getUsers)
 router.get('/user/:id', getUser)
 
 // POST a new formation
-router.post('/user/', createUser)
+router.post('/user/', createUserApp)
 
 
 // DELETE a formation

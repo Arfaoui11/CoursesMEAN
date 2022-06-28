@@ -17,6 +17,10 @@ const formationSchema = new mongoose.Schema({
     formations :[{
       type : mongoose.Schema.Types.ObjectId,
       ref : "Course"
+    }],
+    courseApprenant :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "CourseApprenant"
     }]
 });
 

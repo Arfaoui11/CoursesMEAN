@@ -37,7 +37,11 @@ const courseSchema = new mongoose.Schema({
     formateur : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Formateur"
-    }
+    },
+    courseApprenant :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "CourseApprenant"
+    }]
 
 },{timestamps : true});
 

@@ -1,4 +1,5 @@
 const Formateur = require('../models/formateur')
+const Apprenant = require('../models/apprenant')
 
 const mongoose = require('mongoose')
 
@@ -27,13 +28,25 @@ const getUser = async (req, res) => {
 }
 
 // create a new formation
-const createUser = async (req, res) => {
+const createUserFormer = async (req, res) => {
     const {nom, prenom, tarifHoraire,email} = req.body
 
     // add to the database
     try {
         const formateur = await Formateur.create({nom, prenom, tarifHoraire,email} )
         res.status(200).json(formateur)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+}
+
+const createUserApp = async (req, res) => {
+    const {nom, prenom, mobile ,email} = req.body
+
+    // add to the database
+    try {
+        const apprenant = await Apprenant.create({nom, prenom, mobile ,email} )
+        res.status(200).json(apprenant)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -85,7 +98,8 @@ const updateUser = async (req, res) => {
 module.exports = {
     getUsers,
     getUser,
-    createUser,
+    createUserApp,
+    createUserFormer,
     deleteUser,
     updateUser
 }

@@ -1,6 +1,7 @@
 const Formation = require('../models/course')
 const Formateur = require('../models/formateur')
 const Apprenant = require('../models/apprenant')
+const CourseApprenant = require('../models/courseApprenant')
 
 const mongoose = require('mongoose')
 
@@ -63,6 +64,44 @@ const createCourseAndAssignToFormer = async (req, res) => {
 
 }
 
+const assignApprenantToCourse = async (req, res) => {
+    // find out which post you are commenting
+    const {idF,idA} = req.params;
+
+
+
+
+    // get the comment text and record post id
+    try {
+        const apprenant = await Apprenant.findById(idA)
+        const formation = await Formation.findById(idF)
+
+        const courseApp = await CourseApprenant({course:formation._id,apprenant:apprenant._id})
+        await courseApp.save();
+
+
+
+
+        apprenant.courseApprenant.push(courseApp);
+
+        formation.courseApprenant.push(courseApp);
+
+        await apprenant.save();
+        await formation.save();
+
+
+        // save and redirect...
+
+        res.status(200).json(courseApp)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+
+}
+
+
+
+
 
 
 // delete a formation
@@ -115,5 +154,6 @@ module.exports = {
     createCourse,
     createCourseAndAssignToFormer,
     deleteCourse,
-    updateCourse
+    updateCourse,
+    assignApprenantToCourse
 }

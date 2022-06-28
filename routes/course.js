@@ -5,7 +5,8 @@ const {
     createCourse,
     createCourseAndAssignToFormer,
     deleteCourse,
-    updateCourse
+    updateCourse,
+    assignApprenantToCourse
 } = require('../controllers/coursesController')
 
 const router = express.Router()
@@ -18,6 +19,11 @@ router.get('/courses/:id', getCourse)
 
 // POST a new formation
 router.post('/courses/', createCourse)
+
+//assign apprenant to course
+
+router.post('/courses/:idF/:idA', assignApprenantToCourse)
+
 
 router.post('/courses/:id',createCourseAndAssignToFormer)
 
