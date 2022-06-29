@@ -17,7 +17,9 @@ router.get('/user/', getUsers)
 router.get('/user/:id', getUser)
 
 // POST a new formation
-router.post('/user/', createUserApp)
+router.post('/userF/', createUserFormer)
+
+router.post('/userA/', createUserApp)
 
 
 // DELETE a formation

@@ -14,10 +14,6 @@ const formationSchema = new mongoose.Schema({
     email: {
         type: String
     },
-    formations :[{
-      type : mongoose.Schema.Types.ObjectId,
-      ref : "Course"
-    }],
     courseApprenant :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "CourseApprenant"

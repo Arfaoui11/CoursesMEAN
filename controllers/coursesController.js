@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 
 // get all formation
 const getCourses = async (req, res) => {
-    const courses = await Formation.find({}).sort({createdAt: -1})
+    const courses = await Formation.find({}).sort({createdAt: -1}).populate('courseApprenant')
 
     res.status(200).json(courses)
 }
@@ -17,17 +17,47 @@ const getCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such workout'})
+        return res.status(404).json({error: 'No such Course'})
     }
 
-    const course = await Formation.findById(id)
+    const course = await Formation.findById(id).populate('formateur')
+    console.log(course.size)
 
     if (!course) {
-        return res.status(404).json({error: 'No such workout'})
+        return res.status(404).json({error: 'No such Course'})
     }
 
     res.status(200).json(course)
 }
+
+
+const countCoursesByFormer = async (req, res) => {
+    const { id ,dateD,dateF } = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    var nbr = 0 ;
+
+    const NbrcourseByFormer = await Formation.countDocuments({'formateur':id})
+
+    const course = await Formation.find({$and:[{'formateur':id},{'dateDebut':{"$gte": dateD}},{'dateFin':{"$lte": dateF}}]}).populate('formateur')
+
+       course.forEach(t => {
+           nbr += (t.nbrHeures * t.formateur.tarifHoraire)
+
+       })
+
+
+    if (!nbr) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    res.status(200).json({count :nbr })
+}
+
+
 
 // create a new formation
 const createCourse = async (req, res) => {
@@ -109,13 +139,13 @@ const deleteCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such Course'})
     }
 
     const course = await Formation.findOneAndDelete({_id: id})
 
     if(!course) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such Course'})
     }
 
     res.status(200).json(course)
@@ -126,7 +156,7 @@ const updateCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such Course'})
     }
 
     const course = await Formation.findOneAndUpdate({_id: id}, {
@@ -134,7 +164,7 @@ const updateCourse = async (req, res) => {
     })
 
     if (!course) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such Course'})
     }
 
     res.status(200).json(course)
@@ -153,6 +183,7 @@ module.exports = {
     getCourse,
     createCourse,
     createCourseAndAssignToFormer,
+    countCoursesByFormer,
     deleteCourse,
     updateCourse,
     assignApprenantToCourse

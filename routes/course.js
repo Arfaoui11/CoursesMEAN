@@ -5,6 +5,7 @@ const {
     createCourse,
     createCourseAndAssignToFormer,
     deleteCourse,
+    countCoursesByFormer,
     updateCourse,
     assignApprenantToCourse
 } = require('../controllers/coursesController')
@@ -16,6 +17,8 @@ router.get('/courses/', getCourses)
 
 // GET a single formation
 router.get('/courses/:id', getCourse)
+
+router.get('/courses/count/:id/:dateD/:dateF',countCoursesByFormer)
 
 // POST a new formation
 router.post('/courses/', createCourse)
