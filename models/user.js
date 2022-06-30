@@ -1,49 +1,55 @@
 const mongoose = require('mongoose');
 
-const courseSchema = new mongoose.Schema({
-    title: {
+const userSchema = new mongoose.Schema({
+    firstName: {
         type: String,
         required:true
     },
-    domain: {
+    profession: {
         type: String,
         enum : ['IT', 'ART', 'CINEMA', 'MUSIC', 'DANCE', 'PHY', 'ECONOMIC', 'MARKETING'],
         default: 'IT',
         required:true
     },
-    level: {
+    type: {
         type: String,
-        enum : ['BEGINNER','INTERMEDIATE','ADVANCED'],
-        default: 'BEGINNER',
+        enum : ['STUDENT','ADMIN','SPUSER','FORMER',],
+        default: 'SPUSER',
         required:true
     },
-    start: {
-        type: Date,
+    state: {
+        type: String,
+        enum : ['DISCIPLINED','WARNED','PUNISHED','EXCLUDED'],
+        default: 'DISCIPLINED',
         required:true
     },
-    end: {
-        type: Date,
+    lastName: {
+        type: String,
         required:true
     },
-    nbrHours: {
+    password: {
+        type: String,
+        required:true
+    },
+    salary: {
         type: Number,
         required:true
     },
-    lieu: {
-        type: String,
+    tarifHoraire: {
+        type: Number,
         required:true
     },
-    nbrMaxParticipant: {
+    age: {
         type: Number
     },
-    costs: {
-        type: Number,
+    phoneNumber: {
+        type: String,
         required:true
     },
-    userF : {
+    coursesF : [{
         type : mongoose.Schema.Types.ObjectId,
-        ref : "User"
-    },
+        ref : "Course"
+    }],
     courseApprenants :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "CourseApprenant"
@@ -52,4 +58,4 @@ const courseSchema = new mongoose.Schema({
 },{timestamps : true});
 
 
-module.exports = mongoose.model('Course', courseSchema);
+module.exports = mongoose.model('User', userSchema);

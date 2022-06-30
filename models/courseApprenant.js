@@ -6,9 +6,9 @@ const courseAppSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Course"
     },
-    apprenant : {
+    userA : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "Apprenant"
+        ref : "User"
     }
 
 });

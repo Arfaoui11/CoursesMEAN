@@ -1,13 +1,13 @@
 const Formation = require('../models/course')
-const Formateur = require('../models/formateur')
-const Apprenant = require('../models/apprenant')
+const User = require('../models/user')
+
 const CourseApprenant = require('../models/courseApprenant')
 
 const mongoose = require('mongoose')
 
 // get all formation
 const getCourses = async (req, res) => {
-    const courses = await Formation.find({}).sort({createdAt: -1}).populate('courseApprenant')
+    const courses = await Formation.find({}).sort({createdAt: -1}).populate('courseApprenants')
 
     res.status(200).json(courses)
 }
@@ -20,7 +20,7 @@ const getCourse = async (req, res) => {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    const course = await Formation.findById(id).populate('formateur')
+    const course = await Formation.findById(id).populate('userF')
     console.log(course.size)
 
     if (!course) {
@@ -38,11 +38,11 @@ const countCoursesByFormer = async (req, res) => {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    var nbr = 0 ;
+    let nbr = 0;
 
-    const NbrcourseByFormer = await Formation.countDocuments({'formateur':id})
+    const NbrcourseByFormer = await Formation.countDocuments({'userF':id})
 
-    const course = await Formation.find({$and:[{'formateur':id},{'dateDebut':{"$gte": dateD}},{'dateFin':{"$lte": dateF}}]}).populate('formateur')
+    const course = await Formation.find({$and:[{'userF':id},{'dateDebut':{"$gte": dateD}},{'dateFin':{"$lte": dateF}}]}).populate('userF')
 
        course.forEach(t => {
            nbr += (t.nbrHeures * t.formateur.tarifHoraire)
@@ -57,15 +57,61 @@ const countCoursesByFormer = async (req, res) => {
     res.status(200).json({count :nbr })
 }
 
+const getNbrApprenantByFormation = async (req, res) => {
+    const { id  } = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+
+
+    const course = await Formation.findById(id)
+
+
+
+
+    if (!course) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    res.status(200).json({count :course.courseApprenants.length })
+}
+
+const getCoursesByDomain = async (req, res) => {
+    let filtre = {};
+
+    if (req.query.domain) {
+        filtre = {domain : req.query.domain.split(',')}
+    }
+
+
+
+    const course = await Formation.find(filtre)
+
+
+
+
+    if (!course) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    res.status(200).json(course)
+}
+
+
+
+
+
 
 
 // create a new formation
 const createCourse = async (req, res) => {
-    const {title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais} = req.body
+    const {title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs} = req.body
 
     // add to the database
     try {
-        const course = await Formation.create({title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais})
+        const course = await Formation.create({title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs})
         res.status(200).json(course)
     } catch (error) {
         res.status(400).json({ error: error.message })
@@ -74,17 +120,23 @@ const createCourse = async (req, res) => {
 const createCourseAndAssignToFormer = async (req, res) => {
     // find out which post you are commenting
     const id = req.params.id;
-    const {title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais} = req.body
+    const {title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs} = req.body
     // get the comment text and record post id
     try {
-        const course = await Formation({title, niveau, dateDebut,dateFin,nbrHeures,nbrMaxParticipant,frais,formateur: id})
+        const formateur = await User.findById(id);
+
+        if (formateur.type.toString() !== "FORMER")
+        {
+            res.status(404).json({ error: 'Assign to Courses former not Other type' })
+        }
+        const course = await Formation({title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
 
         // save comment
         await course.save();
         // get this particular post
-        const formateur = await Formateur.findById(id);
+
         // push the comment into the post.comments array
-        formateur.formations.push(course);
+        formateur.coursesF.push(course);
         // save and redirect...
         await formateur.save()
         res.status(200).json(course)
@@ -103,18 +155,24 @@ const assignApprenantToCourse = async (req, res) => {
 
     // get the comment text and record post id
     try {
-        const apprenant = await Apprenant.findById(idA)
+        const apprenant = await User.findById(idA)
         const formation = await Formation.findById(idF)
 
-        const courseApp = await CourseApprenant({course:formation._id,apprenant:apprenant._id})
+        if (apprenant.type.toString() !== "STUDENT")
+        {
+            res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
+        }
+
+
+        const courseApp = await CourseApprenant({course:formation._id,userA:apprenant._id})
         await courseApp.save();
 
 
 
 
-        apprenant.courseApprenant.push(courseApp);
+        apprenant.courseApprenants.push(courseApp);
 
-        formation.courseApprenant.push(courseApp);
+        formation.courseApprenants.push(courseApp);
 
         await apprenant.save();
         await formation.save();
@@ -184,6 +242,8 @@ module.exports = {
     createCourse,
     createCourseAndAssignToFormer,
     countCoursesByFormer,
+    getCoursesByDomain,
+    getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,
     assignApprenantToCourse

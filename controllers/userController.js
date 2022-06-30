@@ -1,11 +1,12 @@
-const Formateur = require('../models/formateur')
-const Apprenant = require('../models/apprenant')
+const User = require('../models/user')
+const Course = require('../models/course')
+
 
 const mongoose = require('mongoose')
 
 // get all formation
 const getUsers = async (req, res) => {
-    const Users = await Formateur.find({})
+    const Users = await User.find({})
 
     res.status(200).json(Users)
 }
@@ -18,7 +19,7 @@ const getUser = async (req, res) => {
         return res.status(404).json({error: 'No such workout'})
     }
 
-    const course = await Formation.findById(id)
+    const course = await Course.findById(id)
 
     if (!course) {
         return res.status(404).json({error: 'No such workout'})
@@ -28,29 +29,19 @@ const getUser = async (req, res) => {
 }
 
 // create a new formation
-const createUserFormer = async (req, res) => {
-    const {nom, prenom, tarifHoraire,email} = req.body
+const createUser = async (req, res) => {
+    const {firstName,lastName, profession, type,state,password,salary,tarifHoraire,age,phoneNumber} = req.body
 
     // add to the database
     try {
-        const formateur = await Formateur.create({nom, prenom, tarifHoraire,email} )
+        const formateur = await User.create({firstName,lastName, profession, type,state,password,salary,tarifHoraire,age,phoneNumber} )
         res.status(200).json(formateur)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
 }
 
-const createUserApp = async (req, res) => {
-    const {nom, prenom, mobile ,email} = req.body
 
-    // add to the database
-    try {
-        const apprenant = await Apprenant.create({nom, prenom, mobile ,email} )
-        res.status(200).json(apprenant)
-    } catch (error) {
-        res.status(400).json({ error: error.message })
-    }
-}
 
 
 
@@ -63,7 +54,7 @@ const deleteUser = async (req, res) => {
         return res.status(400).json({error: 'No such workout'})
     }
 
-    const Formateur = await Formateur.findOneAndDelete({_id: id})
+    const Formateur = await User.findOneAndDelete({_id: id})
 
     if(!Formateur) {
         return res.status(400).json({error: 'No such workout'})
@@ -80,7 +71,7 @@ const updateUser = async (req, res) => {
         return res.status(400).json({error: 'No such workout'})
     }
 
-    const formateur = await Formateur.findOneAndUpdate({_id: id}, {
+    const formateur = await User.findOneAndUpdate({_id: id}, {
         ...req.body
     })
 
@@ -98,8 +89,7 @@ const updateUser = async (req, res) => {
 module.exports = {
     getUsers,
     getUser,
-    createUserApp,
-    createUserFormer,
+    createUser,
     deleteUser,
     updateUser
 }
