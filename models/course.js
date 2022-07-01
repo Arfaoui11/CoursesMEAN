@@ -60,6 +60,6 @@ const courseSchema = new mongoose.Schema({
     });
 
 
-    // legion change    hello
+    // legion change
 
 module.exports = mongoose.model('Course', courseSchema);
