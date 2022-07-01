@@ -5,11 +5,14 @@ const mongoose = require('mongoose')
 const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
 
+const authJwt = require('./jwt/jwt');
+
 // express app
-const app = express()
+const app = express();
 
 // middleware
-app.use(express.json())
+app.use(express.json());
+app.use(authJwt.apply());
 
 app.use((req, res, next) => {
     console.log(req.path, req.method)

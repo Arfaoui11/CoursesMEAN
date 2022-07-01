@@ -8,17 +8,21 @@
   },
   "dependencies": {
     "@handlebars/allow-prototype-access": "^1.0.5",
+    "bcryptjs": "^2.4.3",
     "body-parser": "latest",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^16.0.1",
     "express": "~4.16.1",
     "express-handlebars": "^3.0.0",
+    "express-jwt": "^5.3.1",
     "handlebars": "latest",
     "http-errors": "~1.6.3",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.0",
-    "morgan": "~1.9.1",
+    "morgan": "^1.9.1",
     "nodemon": "^2.0.16",
     "pug": "2.0.0-beta11"
-  }
+  },
+  "devDependencies": {}
 }

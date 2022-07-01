@@ -1,12 +1,51 @@
 const User = require('../models/user')
 const Course = require('../models/course')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken')
 
 
 const mongoose = require('mongoose')
 
+//login
+
+const loginRequest = async (req,res) => {
+
+
+    const secret = process.env.JWT_SECRET
+    const user = await  User.findOne({email: req.body.email})
+
+    if (!user)
+    {
+        return res.status(404).json({error: 'No such User Found'})
+    }
+
+
+    if (user &&  bcrypt.compareSync(req.body.password ,user.password))
+    {
+        const token = jwt.sign(
+            {
+                userId : user.id
+            },
+            secret,
+            {
+                expiresIn: '1d'
+            }
+        )
+
+        res.status(200).json({user : user.email , token : token})
+    }else
+    {
+        res.status(200).json('Password Wrong !!!!')
+    }
+
+
+}
+
+
+
 // get all formation
 const getUsers = async (req, res) => {
-    const Users = await User.find({})
+    const Users = await User.find({}).select('-password')
 
     res.status(200).json(Users)
 }
@@ -19,7 +58,7 @@ const getUser = async (req, res) => {
         return res.status(404).json({error: 'No such workout'})
     }
 
-    const course = await Course.findById(id)
+    const course = await Course.findById(id).select('-password')
 
     if (!course) {
         return res.status(404).json({error: 'No such workout'})
@@ -30,11 +69,14 @@ const getUser = async (req, res) => {
 
 // create a new formation
 const createUser = async (req, res) => {
-    const {firstName,lastName, profession, type,state,password,salary,tarifHoraire,age,phoneNumber} = req.body
+    const {firstName,lastName, profession,email, type,state,salary,tarifHoraire,age,phoneNumber} = req.body
+
+
+
 
     // add to the database
     try {
-        const formateur = await User.create({firstName,lastName, profession, type,state,password,salary,tarifHoraire,age,phoneNumber} )
+        let formateur = await User.create({firstName,lastName, email,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
         res.status(200).json(formateur)
     } catch (error) {
         res.status(400).json({ error: error.message })
@@ -87,6 +129,7 @@ const updateUser = async (req, res) => {
 
 
 module.exports = {
+    loginRequest,
     getUsers,
     getUser,
     createUser,
