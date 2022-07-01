@@ -24,7 +24,8 @@ const loginRequest = async (req,res) => {
     {
         const token = jwt.sign(
             {
-                userId : user.id
+                userId : user.id,
+                isAdmin: user.isAdmin
             },
             secret,
             {
@@ -58,7 +59,7 @@ const getUser = async (req, res) => {
         return res.status(404).json({error: 'No such workout'})
     }
 
-    const course = await Course.findById(id).select('-password')
+    const course = await User.findById(id).select('-password')
 
     if (!course) {
         return res.status(404).json({error: 'No such workout'})
@@ -69,14 +70,14 @@ const getUser = async (req, res) => {
 
 // create a new formation
 const createUser = async (req, res) => {
-    const {firstName,lastName, profession,email, type,state,salary,tarifHoraire,age,phoneNumber} = req.body
+    const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body
 
 
 
 
     // add to the database
     try {
-        let formateur = await User.create({firstName,lastName, email,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
+        let formateur = await User.create({firstName,lastName, email,isAdmin ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
         res.status(200).json(formateur)
     } catch (error) {
         res.status(400).json({ error: error.message })
