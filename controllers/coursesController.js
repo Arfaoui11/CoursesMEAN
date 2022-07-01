@@ -42,19 +42,19 @@ const countCoursesByFormer = async (req, res) => {
 
     const NbrcourseByFormer = await Formation.countDocuments({'userF':id})
 
-    const course = await Formation.find({$and:[{'userF':id},{'dateDebut':{"$gte": dateD}},{'dateFin':{"$lte": dateF}}]}).populate('userF')
+    const course = await Formation.find({$and:[{'userF':id},{'start':{"$gte": dateD}},{'end':{"$lte": dateF}}]}).populate('userF')
 
        course.forEach(t => {
-           nbr += (t.nbrHeures * t.formateur.tarifHoraire)
+           nbr += (t.nbrHours * t.userF.tarifHoraire)
 
        })
 
 
-    if (!nbr) {
+    if (!NbrcourseByFormer) {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    res.status(200).json({count :nbr })
+    res.status(200).json({count :NbrcourseByFormer })
 }
 
 const getNbrApprenantByFormation = async (req, res) => {
@@ -78,13 +78,19 @@ const getNbrApprenantByFormation = async (req, res) => {
     res.status(200).json({count :course.courseApprenants.length })
 }
 
-const getCoursesByDomain = async (req, res) => {
+const getCoursesByFormer = async (req, res) => {
     let filtre = {};
 
-    if (req.query.domain) {
-        filtre = {domain : req.query.domain.split(',')}
-    }
 
+
+    if (req.query.userF) {
+        filtre = {userF : req.query.userF.split(',')}
+    }
+    console.log(req.query.userF.split(','))
+
+    if (!mongoose.Types.ObjectId.isValid(req.query.userF.split(','))) {
+        return res.status(404).json({error: 'No such Found'})
+    }
 
 
     const course = await Formation.find(filtre)
@@ -242,7 +248,7 @@ module.exports = {
     createCourse,
     createCourseAndAssignToFormer,
     countCoursesByFormer,
-    getCoursesByDomain,
+    getCoursesByFormer,
     getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,

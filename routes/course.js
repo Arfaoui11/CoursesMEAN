@@ -7,13 +7,15 @@ const {
     deleteCourse,
     countCoursesByFormer,
     getNbrApprenantByFormation,
-    getCoursesByDomain,
+    getCoursesByFormer,
     updateCourse,
     assignApprenantToCourse
 } = require('../controllers/coursesController')
 
 const router = express.Router()
 
+
+router.get('/courses/',getCoursesByFormer)
 // GET all formations
 router.get('/courses/', getCourses)
 
@@ -26,7 +28,7 @@ router.get('/courses/count/:id/:dateD/:dateF',countCoursesByFormer)
 // POST a new formation
 router.post('/courses/', createCourse)
 
-router.get('/',getCoursesByDomain)
+
 
 //assign apprenant to course
 
