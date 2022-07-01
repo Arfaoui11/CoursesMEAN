@@ -11,7 +11,7 @@ const {
 const router = express.Router()
 
 //POST Login
-router.post('/login',loginRequest)
+router.post('/user/login',loginRequest)
 
 // GET all formations
 router.get('/user/', getUsers)
@@ -20,7 +20,7 @@ router.get('/user/', getUsers)
 router.get('/user/:id', getUser)
 
 // POST a new formation
-router.post('/user/', createUser)
+router.post('/user/register', createUser)
 
 // DELETE a formation
 router.delete('/user/:id', deleteUser)

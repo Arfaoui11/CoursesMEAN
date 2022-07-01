@@ -6,6 +6,7 @@ const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
 
 const authJwt = require('./jwt/jwt');
+const errorHandler = require('./jwt/error-handler')
 
 // express app
 const app = express();
@@ -14,10 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(authJwt.apply());
 
-app.use((req, res, next) => {
-    console.log(req.path, req.method)
-    next()
-})
+app.use(errorHandler)
 
 // routes
 app.use('/api', CoursesRoutes,UserRoutes)

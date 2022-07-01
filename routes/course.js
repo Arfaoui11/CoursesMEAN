@@ -13,11 +13,11 @@ const {
 } = require('../controllers/coursesController')
 
 const router = express.Router()
-
+router.get('/courses/', getCourses)
 
 router.get('/courses/',getCoursesByFormer)
 // GET all formations
-router.get('/courses/', getCourses)
+
 
 // GET a single formation
 router.get('/courses/:id', getCourse)
