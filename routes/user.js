@@ -1,5 +1,6 @@
 const express = require('express')
 const {
+    loginRequest,
     getUsers,
     getUser,
     createUser,
@@ -8,6 +9,9 @@ const {
 } = require('../controllers/userController')
 
 const router = express.Router()
+
+//POST Login
+router.post('/login',loginRequest)
 
 // GET all formations
 router.get('/user/', getUsers)

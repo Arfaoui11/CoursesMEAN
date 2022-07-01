@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required:true
     },
+    email: {
+        type: String,
+        required:true
+    },
     password: {
         type: String,
         required:true
@@ -46,6 +50,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required:true
     },
+    isAdmin: {
+        type: Boolean,
+        default : false
+    },
+
     coursesF : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Course"
@@ -56,6 +65,15 @@ const userSchema = new mongoose.Schema({
     }]
 
 },{timestamps : true});
+
+userSchema.virtual('id').get(function () {
+    return this._id.toHexString();
+});
+
+userSchema.set('toJSON',{
+    virtuals : true,
+});
+
 
 
 module.exports = mongoose.model('User', userSchema);
