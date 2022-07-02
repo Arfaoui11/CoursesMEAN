@@ -16,7 +16,7 @@ const FILE_TYPE_MAP = {
     'image/jpg': 'jpg'
 };
 
-
+/*
 const storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
@@ -27,7 +27,7 @@ const storage = multer.diskStorage({
             uploadError = null
         }
 
-        cb(uploadError, 'public/uploads')
+        cb(uploadError, './public/uploads')
     },
     filename: function (req, file, cb) {
         const fileName = file.originalname.split(' ').join('-');
@@ -40,6 +40,21 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage
 })
+
+
+ */
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/uploads')
+    },
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        cb(null, file.fieldname + '-' + Date.now()+ '.' +extension)
+    }
+})
+const upload = multer({ storage: storage })
 
 
 // get all formation
@@ -152,13 +167,10 @@ const getCoursesByFormer = async (req, res) => {
 const  createCourse =  async (req, res) => {
     const {title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs} = req.body;
 
-    console.log(title)
-    const fileName = req.file.filename;
-    const basePath = `${req.protocol}://${req.get('host')}/public/uploads`;
 
     // add to the database
     try {
-        const course = await Formation.create({title, domain,level,file : `${basePath}${fileName}` ,  start,end,nbrHours,lieu,nbrMaxParticipant,costs})
+        const course = await Formation.create({title, domain,level,  start,end,nbrHours,lieu,nbrMaxParticipant,costs})
         res.status(200).json(course)
     } catch (error) {
         res.status(400).json({ error: error.message })
@@ -167,7 +179,16 @@ const  createCourse =  async (req, res) => {
 const createCourseAndAssignToFormer = async (req, res) => {
     // find out which post you are commenting
     const id = req.params.id;
-    const {title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs} = req.body
+
+    const file = req.file;
+    if (!file) return res.status(400).send('No image in the request')
+
+    const fileName = req.file.filename;
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads`;
+
+    console.log(req.file);
+
+    const {title, domain,level, start,end,nbrHours ,lieu,nbrMaxParticipant,costs} = req.body
     // get the comment text and record post id
     try {
         const formateur = await User.findById(id);
@@ -176,7 +197,7 @@ const createCourseAndAssignToFormer = async (req, res) => {
         {
             res.status(404).json({ error: 'Assign to Courses former not Other type' })
         }
-        const course = await Formation({title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
+        const course = await Formation({title, domain,level,image : `${basePath}${fileName}` , start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
 
         // save comment
         await course.save();
@@ -192,6 +213,46 @@ const createCourseAndAssignToFormer = async (req, res) => {
     }
 
 }
+
+const updateCourseAndAssignToFormer = async (req, res) => {
+    // find out which post you are commenting
+    const id = req.params.id;
+
+    const file = req.file;
+    if (!file) return res.status(400).send('No image in the request')
+
+    const fileName = req.file.filename;
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads`;
+
+    console.log(req.file);
+
+    const {title, domain,level, start,end,nbrHours ,lieu,nbrMaxParticipant,costs} = req.body
+    // get the comment text and record post id
+    try {
+        const formateur = await User.findById(id);
+
+        if (formateur.type.toString() !== "FORMER")
+        {
+            res.status(404).json({ error: 'Assign to Courses former not Other type' })
+        }
+        const course = await Formation({title, domain,level,image : `${basePath}${fileName}` , start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
+
+        // save comment
+        await course.save();
+        // get this particular post
+
+        // push the comment into the post.comments array
+        formateur.coursesF.push(course);
+        // save and redirect...
+        await formateur.save()
+        res.status(200).json(course)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+
+}
+
+
 
 const assignApprenantToCourse = async (req, res) => {
     // find out which post you are commenting
@@ -293,6 +354,7 @@ module.exports = {
     getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,
+    updateCourseAndAssignToFormer,
     assignApprenantToCourse,
     upload,
 }

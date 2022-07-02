@@ -5,14 +5,15 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
-
+const bodyParser = require('body-parser')
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const morgan = require('morgan')
 
 //const swaggerUi = require('swagger-ui-express'),
 //swaggerDocument = require('./swagger.json');
 
-const bp = require("body-parser");
+
 
 
 
@@ -22,8 +23,23 @@ const errorHandler = require('./jwt/error-handler')
 
 // express app
 const app = express();
+app.use(morgan('tiny'));
 
 // middleware
+
+//app.options('*',cors());
+
+app.use('/public/uploads',express.static(__dirname +'/public/uploads'))
+
+// use of body parser
+/*app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+
+ */
+
 app.use(cors());
 
 

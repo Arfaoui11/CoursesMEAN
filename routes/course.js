@@ -10,6 +10,7 @@ const {
     getCoursesByFormer,
     updateCourse,
     upload,
+    updatreCourseAndAssignToFormer,
     assignApprenantToCourse
 } = require('../controllers/coursesController')
 
@@ -31,7 +32,7 @@ router.get('/courses/countnbr/:id', getNbrApprenantByFormation)
 router.get('/courses/count/:id/:dateD/:dateF',countCoursesByFormer)
 
 
-router.post('/courses/',upload.single('image') ,createCourse)
+router.post('/courses/',createCourse)
 
 
 
@@ -40,7 +41,9 @@ router.post('/courses/',upload.single('image') ,createCourse)
 router.post('/courses/:idF/:idA', assignApprenantToCourse)
 
 
-router.post('/courses/:id',createCourseAndAssignToFormer)
+router.post(`/courses/:id`,upload.single('image') ,createCourseAndAssignToFormer)
+
+router.put('/courses/multiple/:id',upload.array('images'),updatreCourseAndAssignToFormer)
 
 
 router.delete('/courses/:id', deleteCourse)
