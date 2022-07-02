@@ -5,7 +5,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
-const bodyParser = require('body-parser')
+
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -26,16 +26,14 @@ const app = express();
 // middleware
 app.use(cors());
 
-app.use(bp.json());
-app.use(bp.urlencoded({ extended: true }));
 
-/*app.use(express.json());
+app.use(express.json());
 
 app.use(express.urlencoded({ extended: true}))
 app.disable('etag');
 
 
- */
+
 app.use(authJwt.apply());
 
 app.use(errorHandler)
