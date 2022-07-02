@@ -25,6 +25,13 @@ const courseSchema = new mongoose.Schema({
         type: Date,
         required:true
     },
+    file : {
+        type :String,
+        default: ''
+    },
+    files : [{
+        type :String
+    }],
     nbrHours: {
         type: Number,
         required:true

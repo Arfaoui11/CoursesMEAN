@@ -9,24 +9,29 @@ const {
     getNbrApprenantByFormation,
     getCoursesByFormer,
     updateCourse,
+    upload,
     assignApprenantToCourse
 } = require('../controllers/coursesController')
 
 const router = express.Router()
-router.get('/courses/', getCourses)
 
-router.get('/courses/',getCoursesByFormer)
+
+router.get('/courses/', getCourses);
+
+
+router.get('/courses/',getCoursesByFormer);
 // GET all formations
 
 
-// GET a single formation
-router.get('/courses/:id', getCourse)
+router.get('/courses/:id', getCourse);
+
 router.get('/courses/countnbr/:id', getNbrApprenantByFormation)
+
 
 router.get('/courses/count/:id/:dateD/:dateF',countCoursesByFormer)
 
-// POST a new formation
-router.post('/courses/', createCourse)
+
+router.post('/courses/',upload.single('image') ,createCourse)
 
 
 
@@ -37,10 +42,10 @@ router.post('/courses/:idF/:idA', assignApprenantToCourse)
 
 router.post('/courses/:id',createCourseAndAssignToFormer)
 
-// DELETE a formation
+
 router.delete('/courses/:id', deleteCourse)
 
-// UPDATE a formation
+
 router.patch('/courses/:id', updateCourse)
 
 module.exports = router

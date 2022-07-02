@@ -1,13 +1,50 @@
 const Formation = require('../models/course')
 const User = require('../models/user')
 
+
+
 const CourseApprenant = require('../models/courseApprenant')
 
 const mongoose = require('mongoose')
 
+
+const multer = require('multer')
+
+const FILE_TYPE_MAP = {
+    'image/png' : 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg'
+};
+
+
+const storage = multer.diskStorage({
+
+    destination: function (req, file, cb) {
+        const isValid = FILE_TYPE_MAP[file.mimeType];
+        let uploadError = new Error('invalid image type');
+        if (isValid)
+        {
+            uploadError = null
+        }
+
+        cb(uploadError, 'public/uploads')
+    },
+    filename: function (req, file, cb) {
+        const fileName = file.originalname.split(' ').join('-');
+        const extension = FILE_TYPE_MAP[file.mimeType];
+
+        cb(null, `${fileName}-${Date.now()}.${extension}`)
+    }
+})
+
+const upload = multer({
+    storage: storage
+})
+
+
 // get all formation
 const getCourses = async (req, res) => {
-    const courses = await Formation.find({}).sort({createdAt: -1}).populate('courseApprenants')
+    const courses = await Formation.find({}).sort({createdAt: -1}).populate('userF').populate({path:'courseApprenants',populate:'course userA' })
 
     res.status(200).json(courses)
 }
@@ -20,7 +57,7 @@ const getCourse = async (req, res) => {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    const course = await Formation.findById(id).populate('userF')
+    const course = await Formation.findById(id).populate('userF').populate({path:'courseApprenants',populate:'course userA' })
     console.log(course.size)
 
     if (!course) {
@@ -112,12 +149,16 @@ const getCoursesByFormer = async (req, res) => {
 
 
 // create a new formation
-const createCourse = async (req, res) => {
-    const {title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs} = req.body
+const  createCourse =  async (req, res) => {
+    const {title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs} = req.body;
+
+    console.log(title)
+    const fileName = req.file.filename;
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads`;
 
     // add to the database
     try {
-        const course = await Formation.create({title, domain,level, start,end,nbrHours,lieu,nbrMaxParticipant,costs})
+        const course = await Formation.create({title, domain,level,file : `${basePath}${fileName}` ,  start,end,nbrHours,lieu,nbrMaxParticipant,costs})
         res.status(200).json(course)
     } catch (error) {
         res.status(400).json({ error: error.message })
@@ -252,5 +293,6 @@ module.exports = {
     getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,
-    assignApprenantToCourse
+    assignApprenantToCourse,
+    upload,
 }
