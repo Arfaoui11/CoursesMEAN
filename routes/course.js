@@ -43,7 +43,7 @@ router.post('/courses/:idF/:idA', assignApprenantToCourse)
 
 router.post(`/courses/:id`,upload.single('image') ,createCourseAndAssignToFormer)
 
-router.put('/courses/multiple/:id',upload.array('images'),updatreCourseAndAssignToFormer)
+router.put('/courses/multiple/:id',upload.array('images',10),updatreCourseAndAssignToFormer)
 
 
 router.delete('/courses/:id', deleteCourse)

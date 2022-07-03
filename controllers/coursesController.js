@@ -184,9 +184,9 @@ const createCourseAndAssignToFormer = async (req, res) => {
     if (!file) return res.status(400).send('No image in the request')
 
     const fileName = req.file.filename;
-    const basePath = `${req.protocol}://${req.get('host')}/public/uploads`;
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
-    console.log(req.file);
+
 
     const {title, domain,level, start,end,nbrHours ,lieu,nbrMaxParticipant,costs} = req.body
     // get the comment text and record post id
@@ -214,38 +214,49 @@ const createCourseAndAssignToFormer = async (req, res) => {
 
 }
 
-const updateCourseAndAssignToFormer = async (req, res) => {
+const updatreCourseAndAssignToFormer = async (req, res) => {
     // find out which post you are commenting
-    const id = req.params.id;
+    const { id } = req.params;
 
-    const file = req.file;
-    if (!file) return res.status(400).send('No image in the request')
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({error: 'No such Course'})
+    }
 
-    const fileName = req.file.filename;
-    const basePath = `${req.protocol}://${req.get('host')}/public/uploads`;
+    const files = req.files
+    let filesPaths = [];
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
-    console.log(req.file);
+    if (files.length >= 1)
+    {
+        files.map( f => {
+            filesPaths.push(`${basePath}${f.filename}`)
+        })
+    }else
+    {
+        return res.status(400).json({error: 'No such Files'})
+    }
 
-    const {title, domain,level, start,end,nbrHours ,lieu,nbrMaxParticipant,costs} = req.body
+
+
     // get the comment text and record post id
     try {
-        const formateur = await User.findById(id);
 
-        if (formateur.type.toString() !== "FORMER")
-        {
-            res.status(404).json({ error: 'Assign to Courses former not Other type' })
+
+
+        const course = await Formation.findByIdAndUpdate(id, {
+            images : filesPaths
+        },
+            { new:true }
+        )
+
+        if (!course) {
+            return res.status(500).json({error: 'the Courses cannot be updated ! '})
         }
-        const course = await Formation({title, domain,level,image : `${basePath}${fileName}` , start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
 
-        // save comment
-        await course.save();
-        // get this particular post
 
-        // push the comment into the post.comments array
-        formateur.coursesF.push(course);
-        // save and redirect...
-        await formateur.save()
+
         res.status(200).json(course)
+
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -354,7 +365,7 @@ module.exports = {
     getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,
-    updateCourseAndAssignToFormer,
+    updatreCourseAndAssignToFormer,
     assignApprenantToCourse,
     upload,
 }
