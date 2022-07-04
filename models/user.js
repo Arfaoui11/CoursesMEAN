@@ -62,6 +62,30 @@ const userSchema = new mongoose.Schema({
     courseApprenants :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "CourseApprenant"
+    }],
+    likes :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Like"
+    }],
+    dislikes :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Dislike"
+    }],
+    comments :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Comment"
+    }],
+    Certificates :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Certificate"
+    }],
+    results :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Result"
+    }],
+    Ratings :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Rating"
     }]
 
 },{timestamps : true});

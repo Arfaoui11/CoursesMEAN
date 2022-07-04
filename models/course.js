@@ -54,6 +54,22 @@ const courseSchema = new mongoose.Schema({
     courseApprenants :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "CourseApprenant"
+    }],
+    quizzes :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Quiz"
+    }],
+    comments :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Comment"
+    }],
+    Certificates :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Certificate"
+    }],
+    Ratings :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Rating"
     }]
 
 },{timestamps : true});
