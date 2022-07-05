@@ -55,7 +55,7 @@ const courseSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "CourseApprenant"
     }],
-   /* quizzes :[{
+    quizzes :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Quiz"
     }],
@@ -71,8 +71,6 @@ const courseSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rating"
     }]
-
-    */
 
 },{timestamps : true});
 
