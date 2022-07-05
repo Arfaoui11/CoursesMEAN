@@ -63,11 +63,11 @@ const courseSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Comment"
     }],
-    Certificates :[{
+    certificates :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Certificate"
     }],
-    Ratings :[{
+    ratings :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rating"
     }]
