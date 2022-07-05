@@ -33,7 +33,7 @@ const loginRequest = async (req,res) => {
             }
         )
 
-        res.status(200).json({user : user.email , token : token})
+        res.status(200).json({user : user , token : token})
     }else
     {
         res.status(200).json('Password Wrong !!!!')
