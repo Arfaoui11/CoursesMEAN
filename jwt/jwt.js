@@ -10,6 +10,7 @@ function authJwt() {
 
         path : [
             {url : /\/api\/courses(.*)/ , methods : ['GET','OPTIONS'] },
+            {url : /\/api\/comment(.*)/ , methods : ['GET','POST','OPTIONS'] },
             {url : /\/public\/uploads(.*)/ , methods : ['GET','OPTIONS'] },
             {url : /\/api-swagger(.*)/ , methods : ['GET','POST','PUT','DELETE','OPTIONS'] },
             '/api/user/login',

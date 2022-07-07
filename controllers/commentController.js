@@ -111,7 +111,7 @@ const getCommentByCourse = async (req, res) => {
 
 
     if (!comments) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({error: 'No such Comment'})
     }
 
     res.status(200).json(comments)

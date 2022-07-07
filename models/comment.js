@@ -13,14 +13,14 @@ const commentSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "User"
     },
-    likes : {
+    likes : [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Like"
-    },
-    dislikes : {
+    }],
+    dislikes : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Dislike"
-    },
+    }],
 },{timestamps : true});
 
 commentSchema.virtual('id').get(function () {
