@@ -1,7 +1,8 @@
 const Formation = require('../models/course')
 const User = require('../models/user')
 
-
+const cron = require('node-cron');
+const fs = require('fs');
 
 const CourseApprenant = require('../models/courseApprenant')
 
@@ -44,6 +45,13 @@ const upload = multer({
 
  */
 
+
+// Schedule tasks to be run on the server.
+cron.schedule('* * * * *', function() {
+    console.log('running a task every minute');
+});
+
+
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './public/uploads')
@@ -58,6 +66,10 @@ const upload = multer({ storage: storage })
 
 
 // get all formation
+
+// Schedule tasks to be run on the server.
+
+
 const getCourses = async (req, res) => {
     const courses = await Formation.find({}).sort({createdAt: -1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
 

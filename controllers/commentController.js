@@ -1,7 +1,8 @@
 const User = require('../models/user')
 const Course = require('../models/course')
 const Comment = require('../models/comment')
-
+const Likes = require('../models/likes')
+const Dislikes = require('../models/dislikes')
 
 
 const mongoose = require('mongoose')
