@@ -235,9 +235,6 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
     {
         return res.status(400).json({error: 'No such Files'})
     }
-
-
-
     // get the comment text and record post id
     try {
 
