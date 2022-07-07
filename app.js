@@ -5,6 +5,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
+const CommentRoutes = require('./routes/comment')
 const bodyParser = require('body-parser')
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -80,7 +81,7 @@ const swaggerOptions = {
 
 
 
-app.use('/api', CoursesRoutes,UserRoutes)
+app.use('/api', CoursesRoutes , UserRoutes , CommentRoutes )
 
 
 // connect to db
