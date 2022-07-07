@@ -72,7 +72,7 @@ const getCourse = async (req, res) => {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    const course = await Formation.findById(id).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
+    const course = await Formation.findById(id).populate('userF').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
     console.log(course.size)
 
     if (!course) {
