@@ -5,6 +5,8 @@ const {
     getCommentByCourse,
     assignApprenantToComment,
     createComment,
+    likeComments,
+    dislikeComments,
     deleteComment,
     updateComment
 } = require('../controllers/commentController')
@@ -31,6 +33,11 @@ router.post('/comment/',createComment)
 //assign apprenant to course
 
 router.post('/comment/:idF/:idU', assignApprenantToComment)
+
+router.post('/comment/like/:idC/:idU', likeComments)
+
+
+router.post('/comment/dislike/:idC/:idU', dislikeComments)
 
 
 

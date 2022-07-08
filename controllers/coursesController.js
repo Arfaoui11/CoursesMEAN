@@ -48,7 +48,7 @@ const upload = multer({
 
 // Schedule tasks to be run on the server.
 cron.schedule('* * * * *', function() {
-    console.log('running a task every minute');
+   // getCourses();
 });
 
 
@@ -72,7 +72,7 @@ const upload = multer({ storage: storage })
 
 const getCourses = async (req, res) => {
     const courses = await Formation.find({}).sort({createdAt: -1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
-
+    console.log(courses)
     res.status(200).json(courses)
 }
 

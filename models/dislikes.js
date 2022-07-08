@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 
 const dislikesSchema = new mongoose.Schema({
     nbrDislikes: {
-        type: Number,
-        required :true
+        type: Number
     },
     comment : {
         type: mongoose.Schema.Types.ObjectId,

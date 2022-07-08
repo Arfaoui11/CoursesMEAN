@@ -36,6 +36,88 @@ const getComment = async (req, res) => {
     res.status(200).json(course)
 }
 
+const likeComments = async (req ,res) => {
+    const {idC,idU} = req.params;
+
+    // get the comment text and record post id
+    try {
+        const user = await User.findById(idU)
+        const comment = await Comment.findById(idC)
+
+        if (user.type.toString() !== "STUDENT")
+        {
+            res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
+        }
+
+
+        const like = await Likes({comment:comment._id,user:user._id })
+        await like.save();
+
+
+
+
+        user.likes.push(like);
+
+        comment.likes.push(like);
+
+        await user.save();
+        await comment.save();
+
+
+        // save and redirect...
+
+        res.status(200).json(like)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+
+}
+
+
+const dislikeComments = async (res ,req) => {
+    const {idC,idU} = req.params
+
+    // get the comment text and record post id
+    try {
+        const user = await User.findById(idU)
+        const comment = await Comment.findById(idC)
+
+        if (user.type.toString() !== "STUDENT")
+        {
+            res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
+        }
+
+
+        const dislike = await Dislikes({comment:comment._id,user:user._id })
+        await dislike.save();
+
+
+
+
+        user.dislikes.push(dislike);
+
+        comment.likes.push(dislike);
+
+        await user.save();
+        await comment.save();
+
+
+        // save and redirect...
+
+        res.status(200).json(dislike)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+
+}
+
+
+
+
+
+
+
+
 // create a new formation
 const createComment = async (req, res) => {
     const {message} = req.body
@@ -165,6 +247,8 @@ const updateComment = async (req, res) => {
 module.exports = {
     getComments,
     getComment,
+    likeComments,
+    dislikeComments,
     assignApprenantToComment,
     getCommentByCourse,
     createComment,

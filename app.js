@@ -79,7 +79,11 @@ const swaggerOptions = {
 //app.use("/api-swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
-
+app.use(function (req,res,next) {
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers","c-access-token,Origin,Content-Type,Accept");
+    next();
+});
 
 app.use('/api', CoursesRoutes , UserRoutes , CommentRoutes )
 
