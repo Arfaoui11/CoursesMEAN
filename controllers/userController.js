@@ -8,6 +8,88 @@ const mongoose = require('mongoose')
 
 //login
 
+////////////////////// login jwt jdida //////////////////
+
+const loginNew = async (req,res) => {
+
+    const secret = process.env.JWT_SECRET
+    const user = await  User.findOne({email: req.body.email})
+
+    if (!user)
+    {
+        return res.status(404).json({error: 'No such User Found'})
+    }
+
+
+    if (user &&  bcrypt.compareSync(req.body.password ,user.password))
+    {
+        const token = jwt.sign(
+            {
+                id : user.id,
+                isAdmin: user.isAdmin
+            },
+            secret,
+            {
+                expiresIn: '1d'
+            }
+        )
+        res.cookie('jwt',token ,{
+            httpOnly:true,
+            maxAge : 24 *60 *60 *1000 // 1 day
+        })
+        res.status(200).json({message : 'success'});
+    }else
+    {
+        res.status(200).json('Password Wrong !!!!')
+    }
+
+
+}
+
+
+const getUsera =async (req,res) => {
+
+    try {
+        const secret = process.env.JWT_SECRET
+
+        const cookie = req.cookies['jwt']
+
+        const claims = jwt.verify(cookie,secret)
+
+        if(!claims){
+            return res.status(401).send({
+                message: 'Unauthenticated'
+            })
+        }
+
+        const user = await User.findOne({id:claims.id})
+
+        const {password,...data} = await user.toJSON();
+
+
+        res.send(data)
+    }catch (e) {
+        res.status(401).send({message : 'Unauthenticated'})
+    }
+
+
+
+}
+
+
+const logout = async (req,res) => {
+    res.cookie('jwt','',{
+        maxAge : 0
+    })
+
+    res.send({message : 'success'})
+}
+
+
+
+
+
+////////////////////////login node jwt la9dima ///////////////////
 const loginRequest = async (req,res) => {
 
 

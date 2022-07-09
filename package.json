@@ -10,7 +10,7 @@
     "@handlebars/allow-prototype-access": "^1.0.5",
     "bcryptjs": "^2.4.3",
     "body-parser": "latest",
-    "cookie-parser": "~1.4.4",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.0.1",

@@ -74,8 +74,8 @@ const likeComments = async (req ,res) => {
 }
 
 
-const dislikeComments = async (res ,req) => {
-    const {idC,idU} = req.params
+const dislikeComments = async (req ,res) => {
+    const {idC,idU} = req.params;
 
     // get the comment text and record post id
     try {
@@ -96,7 +96,7 @@ const dislikeComments = async (res ,req) => {
 
         user.dislikes.push(dislike);
 
-        comment.likes.push(dislike);
+        comment.dislikes.push(dislike);
 
         await user.save();
         await comment.save();

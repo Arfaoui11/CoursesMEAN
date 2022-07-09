@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
 const CommentRoutes = require('./routes/comment')
-const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const morgan = require('morgan')
@@ -40,7 +40,12 @@ app.use(bodyParser.urlencoded({
 
  */
 
-app.use(cors());
+app.use(cookieParser());
+
+app.use(cors({
+    credentials:true,
+    origin:['http://localhost:4200']
+}));
 
 
 app.use(express.json());
