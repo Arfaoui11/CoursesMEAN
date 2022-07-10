@@ -3,6 +3,7 @@ const User = require('../models/user')
 
 const cron = require('node-cron');
 const fs = require('fs');
+const mailers = require('../nodemailer/mailer')
 
 const CourseApprenant = require('../models/courseApprenant')
 
@@ -284,7 +285,7 @@ const assignApprenantToCourse = async (req, res) => {
     // get the comment text and record post id
     try {
         const apprenant = await User.findById(idA)
-        const formation = await Formation.findById(idF)
+        const formation = await Formation.findById(idF).populate('userF')
 
         if (apprenant.type.toString() !== "STUDENT")
         {
@@ -307,6 +308,7 @@ const assignApprenantToCourse = async (req, res) => {
 
 
         // save and redirect...
+        mailers.mail("mahdijr2015@gmail.com",formation.title,formation.userF.lastName,formation.image)
 
         res.status(200).json(courseApp)
     } catch (error) {
