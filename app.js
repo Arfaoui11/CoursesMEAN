@@ -98,43 +98,7 @@ app.use(function (req,res,next) {
 
 app.use('/api', CoursesRoutes , UserRoutes , CommentRoutes )
 
-/*
-let mailTransport = nodemailer.createTransport({
-    service : 'gmail',
-    auth : {
-        user : "hajjej.farouk6@gmail.com",
-        pass : "mbjphactpycumumm"
-    }
-})
 
-let details = {
-    from : "hajjej.farouk6@gmail.com",
-    to : "mahdijr2015@gmail.com",
-    subject : "testing our nodemailer",
-    text : "testing our first sender",
-    attachments: [
-        {
-            // use URL as an attachment
-            filename: 'images.jpeg',
-            path: 'http://localhost:4000/public/uploads/image-1656988917431.jpeg'
-        } ]
-}
-
-s
- */
-
-//console.log(mailers.mail("mahdijr2015@gmail.com","hello mahdi arfaoui ye pro !!!!!!!!!!!!!!!","testing our first sender",'http://localhost:4000/public/uploads/image-1656988917431.jpeg'))
-
-
-    /*mailTransport.sendMail(details, (err) => {
-        if (err) {
-            console.log("it has an error " , err)
-        }else {
-            console.log("email has send " )
-        }
-    })
-
-     */
 
 
 
