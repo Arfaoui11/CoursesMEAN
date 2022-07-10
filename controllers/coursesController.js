@@ -308,6 +308,7 @@ const assignApprenantToCourse = async (req, res) => {
 
 
         // save and redirect...
+        //send email to anather mail
         mailers.mail("mahdijr2015@gmail.com",formation.title,formation.userF.lastName,formation.image)
 
         res.status(200).json(courseApp)

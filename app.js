@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
 const CommentRoutes = require('./routes/comment')
+const QuizRoutes = require('./routes/quiz')
 const cookieParser = require('cookie-parser')
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -83,7 +84,7 @@ const swaggerOptions = {
     apis: ["./routes/*.js"]
 };
 
- */
+
 
 //const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
@@ -96,7 +97,9 @@ app.use(function (req,res,next) {
     next();
 });
 
-app.use('/api', CoursesRoutes , UserRoutes , CommentRoutes )
+ */
+
+app.use('/api', CoursesRoutes , UserRoutes , CommentRoutes ,QuizRoutes)
 
 
 
