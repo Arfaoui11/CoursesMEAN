@@ -119,39 +119,36 @@ const getQuestionByQuiz = async (req, res) => {
 
 const addQuestionAndAsigntoQuiz = async (req, res) => {
     // find out which post you are commenting
-    const {idF,idU} = req.params;
+    const {id} = req.params;
 
-    const {message} = req.body
+
+    const {title,optionA,optionB,optionC,optionD,optionE,ans,chose} = req.body
 
 
     // get the comment text and record post id
     try {
-        const user = await User.findById(idU)
-        const formation = await Course.findById(idF)
-
-        if (user.type.toString() !== "STUDENT")
-        {
-            res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
-        }
-
-
-        const comment = await Comment({course:formation._id,user:user._id ,message : message})
-        await comment.save();
+        const quiz = await Quiz.findById(id);
 
 
 
 
-        user.comments.push(comment);
+        const question = await Question({quiz:quiz._id,title : title ,optionA : optionA ,optionB : optionB , optionC : optionC , optionD : optionD ,optionE : optionE , ans : ans ,chose : chose })
+        await question.save();
 
-        formation.comments.push(comment);
 
-        await user.save();
-        await formation.save();
+
+
+        quiz.questions.push(question);
+
+
+
+        await quiz.save();
+
 
 
         // save and redirect...
 
-        res.status(200).json(comment)
+        res.status(200).json(question)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
