@@ -12,39 +12,9 @@ const mongoose = require('mongoose')
 
 const multer = require('multer')
 
-const FILE_TYPE_MAP = {
-    'image/png' : 'png',
-    'image/jpeg': 'jpeg',
-    'image/jpg': 'jpg'
-};
-
-/*
-const storage = multer.diskStorage({
-
-    destination: function (req, file, cb) {
-        const isValid = FILE_TYPE_MAP[file.mimeType];
-        let uploadError = new Error('invalid image type');
-        if (isValid)
-        {
-            uploadError = null
-        }
-
-        cb(uploadError, './public/uploads')
-    },
-    filename: function (req, file, cb) {
-        const fileName = file.originalname.split(' ').join('-');
-        const extension = FILE_TYPE_MAP[file.mimeType];
-
-        cb(null, `${fileName}-${Date.now()}.${extension}`)
-    }
-})
-
-const upload = multer({
-    storage: storage
-})
 
 
- */
+
 
 
 // Schedule tasks to be run on the server.
@@ -66,9 +36,7 @@ let storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 
-// get all formation
 
-// Schedule tasks to be run on the server.
 
 
 const getCourses = async (req, res) => {
