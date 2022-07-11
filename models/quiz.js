@@ -21,10 +21,10 @@ const quizSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "Question"
     }],
-    results : {
+    results : [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Result"
-    }
+    }]
 },{timestamps : true});
 
 quizSchema.virtual('id').get(function () {

@@ -34,7 +34,7 @@ const addQuiz = async (req ,res) => {
     const {title,score, content} = req.body;
     // get the comment text and record post id
     try {
-        const course = await Course.findById(id)
+        const course = await Course.findById(id);
 
 
         const quiz = await Quiz({title : title,score : score ,content : content , course : course.id });
@@ -58,35 +58,38 @@ const addQuiz = async (req ,res) => {
 
 const SaveScore = async (req ,res) => {
     const {idC,idU} = req.params;
+    const {username,totalCorrect,correctAnswer,inCorrectAnswer} = req.body;
 
     // get the comment text and record post id
     try {
-        const user = await User.findById(idU)
-        const comment = await Comment.findById(idC)
+        const user = await User.findById(idU);
+        const quiz = await Quiz.findById(idC);
 
-        if (user.type.toString() !== "STUDENT")
+        const allResult = Result.find({$and:[  {user :user.id} , {quiz :quiz.id}]});
+
+        if (allResult)
         {
-            res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
+            res.status(404).json({ error: 'This user is tested with this quiz' })
         }
 
 
-        const dislike = await Dislikes({comment:comment._id,user:user._id })
-        await dislike.save();
+        const result = await Result({quiz:quiz._id,user:user._id,username:username,totalCorrect : totalCorrect , correctAnswer : correctAnswer , inCorrectAnswer : inCorrectAnswer })
+        await result.save();
 
 
 
 
-        user.dislikes.push(dislike);
+        user.results.push(result);
 
-        comment.dislikes.push(dislike);
+        quiz.results.push(result);
 
         await user.save();
-        await comment.save();
+        await quiz.save();
 
 
         // save and redirect...
 
-        res.status(200).json(dislike)
+        res.status(200).json(result)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -102,15 +105,15 @@ const SaveScore = async (req ,res) => {
 
 // create a new formation
 const getQuestionByQuiz = async (req, res) => {
-    const {message} = req.body
+    const {id} = req.body
 
 
 
 
     // add to the database
     try {
-        let comment = await Comment.create({message} )
-        res.status(200).json(comment)
+        const question = await Question.find({'quiz':id})
+        res.status(200).json(question)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -155,29 +158,85 @@ const addQuestionAndAsigntoQuiz = async (req, res) => {
 
 }
 
+function getRandomInt(num) {
+    return Math.floor(Math.random() * num);
+}
+
+function randomIntInc(low, high) {
+
+    return Math.floor(Math.random() * (high - low + 1) + low);
+
+}
+
+
+const uniqueRandoms = [];
+
+function makeUniqueRandom(num) {
+    // refill the array if needed
+    if (!uniqueRandoms.length) {
+        for (let i = 0; i < num; i++) {
+            uniqueRandoms.push(i);
+        }
+    }
+    const index = Math.floor(Math.random() * uniqueRandoms.length);
+    const val = uniqueRandoms[index];
+
+    // now remove that value from the array
+    uniqueRandoms.splice(index, 1);
+
+    return val;
+
+}
+
 
 const getQuizQuestion = async (req, res) => {
 
-    const { id } = req.params
 
 
-
+    const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such Found'})
+        return res.status(404).json({error: 'No such Question'})
+    }
+
+    try {
+
+        const quiz = Quiz.findById(id);
+        if (!quiz) {
+            return res.status(404).json({error: 'No such Quiz'})
+        }
+
+        const question = await Question.find({'quiz':id})
+
+
+
+
+
+
+        const listQuestions = [];
+        for (let i=0 ; i<5 ; i++)
+        {
+
+            const rand = makeUniqueRandom(question.length)
+            console.log(rand);
+
+            listQuestions.push(question[rand])
+        }
+
+        if (!listQuestions) {
+            return res.status(404).json({error: 'No such questions'})
+        }
+
+
+
+
+        res.status(200).json(listQuestions)
+    }catch (e) {
+        res.status(400).json({ error: error.message })
     }
 
 
-    const comments = await Comment.find({course:id}).populate('user course')
 
-
-
-
-    if (!comments) {
-        return res.status(404).json({error: 'No such Comment'})
-    }
-
-    res.status(200).json(comments)
 }
 
 
@@ -188,16 +247,21 @@ const DeleteQuiz = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such Comment'})
+        return res.status(400).json({error: 'No such Quiz'})
     }
 
-    const comment = await Comment.findOneAndDelete({_id: id})
+    const quiz = await Quiz.findOneAndDelete({_id: id}, {
+        ...req.body
+    });
 
-    if(!comment) {
-        return res.status(400).json({error: 'No such workout'})
+    const course = await Course.findByIdAndUpdate({_id: quiz.course},{ $pull: { quizzes: quiz._id } })
+    console.log(course)
+
+    if(!quiz) {
+        return res.status(400).json({error: 'No such Quiz'})
     }
 
-    res.status(200).json(comment)
+    res.status(200).json(quiz)
 }
 
 // update a formation
@@ -205,18 +269,46 @@ const DeleteQuestion = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such Question'})
     }
 
-    const comment = await Comment.findOneAndUpdate({_id: id}, {
+    const question = await Question.findByIdAndDelete({_id: id}, {
         ...req.body
-    })
+    }).populate('quiz');
 
-    if (!comment) {
-        return res.status(400).json({error: 'No such workout'})
+    const quiz = await Quiz.findByIdAndUpdate({_id: question.quiz._id},{ $pull: { questions: question._id } })
+    console.log(quiz)
+
+
+  /* Quiz.findById(question.quiz._id)
+        .then(quiz => {
+            console.log(quiz)
+            if (!quiz) {
+                return res.status(500).json({ message: "Quiz not found" });
+            } else {
+                Quiz.questions.pull(question._id);
+
+                Quiz.save()
+                    .then(response => {
+                        return res.status(200).json( { message: 'Id deleted'} );
+                    })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+    //quiz.questions.delete(question._id);
+    //quiz.save();
+
+
+
+   */
+    if (!question) {
+        return res.status(400).json({error: 'No such Question'})
     }
 
-    res.status(200).json(comment)
+    res.status(200).json(question)
 }
 
 
@@ -232,4 +324,4 @@ module.exports = {
     addQuestionAndAsigntoQuiz,
     DeleteQuiz,
     DeleteQuestion
-}
+};
