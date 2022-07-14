@@ -3,10 +3,31 @@ const Course = require('../models/course')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
+const multer = require('multer')
 
 const mongoose = require('mongoose')
 
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/uploads')
+    },
+    filename: function (req, file, cb) {
+        let extArray = file.mimetype.split("/");
+        let extension = extArray[extArray.length - 1];
+        cb(null, file.originalname + '-' + Date.now()+ '.' +extension)
+    }
+})
+const upload = multer({ storage: storage })
+
+
+
+
+
 //login
+
+
+
+
 
 ////////////////////// login jwt jdida //////////////////
 
@@ -217,5 +238,6 @@ module.exports = {
     getUser,
     createUser,
     deleteUser,
-    updateUser
+    updateUser,
+    upload,
 }
