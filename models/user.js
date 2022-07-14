@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
         default: 'SPUSER',
         required:true
     },
+    image : {
+        type :String,
+        default: '',
+        required:true
+    },
     state: {
         type: String,
         enum : ['DISCIPLINED','WARNED','PUNISHED','EXCLUDED'],

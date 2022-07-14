@@ -40,6 +40,14 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required:true
     },
+    skills: {
+        type: String,
+
+    },
+    prerequisites: {
+        type: String,
+
+    },
     nbrMaxParticipant: {
         type: Number
     },
