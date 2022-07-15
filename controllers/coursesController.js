@@ -19,7 +19,7 @@ const multer = require('multer')
 
 // Schedule tasks to be run on the server.
 cron.schedule('* * * * *', function() {
-   // getCourses();
+    // getCourses();
 });
 
 
@@ -63,6 +63,23 @@ const getCourse = async (req, res) => {
     res.status(200).json(course)
 }
 
+const getFormationByApprenant = async (req, res) => {
+    const { idA } = req.params
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    const course = await Formation.findById(id).populate('userF').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
+
+
+    if (!course) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    res.status(200).json(course)
+}
+
 
 const countCoursesByFormer = async (req, res) => {
     const { id ,dateD,dateF } = req.params
@@ -77,10 +94,10 @@ const countCoursesByFormer = async (req, res) => {
 
     const course = await Formation.find({$and:[{'userF':id},{'start':{"$gte": dateD}},{'end':{"$lte": dateF}}]}).populate('userF')
 
-       course.forEach(t => {
-           nbr += (t.nbrHours * t.userF.tarifHoraire)
+    course.forEach(t => {
+        nbr += (t.nbrHours * t.userF.tarifHoraire)
 
-       })
+    })
 
 
     if (!NbrcourseByFormer) {
@@ -222,8 +239,8 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
 
 
         const course = await Formation.findByIdAndUpdate(id, {
-            images : filesPaths
-        },
+                images : filesPaths
+            },
             { new:true }
         )
 
@@ -345,6 +362,7 @@ module.exports = {
     getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,
+    getFormationByApprenant,
     updatreCourseAndAssignToFormer,
     assignApprenantToCourse,
     upload,
