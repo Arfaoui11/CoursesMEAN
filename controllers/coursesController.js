@@ -64,13 +64,15 @@ const getCourse = async (req, res) => {
 }
 
 const getFormationByApprenant = async (req, res) => {
-    const { idA } = req.params
+    const {idA} = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(idA)) {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    const course = await Formation.findById(id).populate('userF').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
+    const course = await CourseApprenant.find({userA : idA}).populate('course').select('course')
+
+
 
 
     if (!course) {
@@ -78,8 +80,8 @@ const getFormationByApprenant = async (req, res) => {
     }
 
     res.status(200).json(course)
-}
 
+}
 
 const countCoursesByFormer = async (req, res) => {
     const { id ,dateD,dateF } = req.params
