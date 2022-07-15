@@ -11,6 +11,7 @@ const {
     getCoursesByFormer,
     updateCourse,
     upload,
+    getFormationByApprenant,
     updatreCourseAndAssignToFormer,
     assignApprenantToCourse
 } = require('../controllers/coursesController')
@@ -26,6 +27,8 @@ router.get('/courses/',getCoursesByFormer);
 
 
 router.get('/courses/:id', getCourse);
+
+router.get('/courses/getMycourses/:idA', getFormationByApprenant);
 
 router.get('/courses/countnbr/:id', getNbrApprenantByFormation)
 
