@@ -70,16 +70,51 @@ const getFormationByApprenant = async (req, res) => {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    const course = await CourseApprenant.find({userA : idA}).populate('course').select('course')
+    const ids = [];
+
+    const course = await CourseApprenant.find({userA : idA})
+
+    course.forEach(t=> {
+        ids.push(t.id)
+    })
 
 
 
+    const list = await Formation.find({courseApprenants : { $in : ids}}).populate('userF').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
 
-    if (!course) {
+
+    if (!list) {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    res.status(200).json(course)
+    res.status(200).json(list)
+
+}
+const getApprenantByFormation = async (req, res) => {
+    const {idC} = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(idC)) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    const ids = [];
+
+    const course = await CourseApprenant.find({course : idC}).populate('userA')
+
+    course.forEach(t=> {
+        ids.push(t.userA.id)
+    })
+
+
+
+    const list = await User.find({_id : { $in : ids}})
+
+
+    if (!list) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    res.status(200).json(list)
 
 }
 
@@ -365,6 +400,7 @@ module.exports = {
     deleteCourse,
     updateCourse,
     getFormationByApprenant,
+    getApprenantByFormation,
     updatreCourseAndAssignToFormer,
     assignApprenantToCourse,
     upload,

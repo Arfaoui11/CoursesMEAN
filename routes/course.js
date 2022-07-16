@@ -11,6 +11,7 @@ const {
     getCoursesByFormer,
     updateCourse,
     upload,
+    getApprenantByFormation,
     getFormationByApprenant,
     updatreCourseAndAssignToFormer,
     assignApprenantToCourse
@@ -29,6 +30,8 @@ router.get('/courses/',getCoursesByFormer);
 router.get('/courses/:id', getCourse);
 
 router.get('/courses/getMycourses/:idA', getFormationByApprenant);
+
+router.get('/courses/getStudent/:idC', getApprenantByFormation);
 
 router.get('/courses/countnbr/:id', getNbrApprenantByFormation)
 
