@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
         default: 'SPUSER',
         required:true
     },
+    image : {
+        type :String,
+        default: ''
+    },
 
     state: {
         type: String,
