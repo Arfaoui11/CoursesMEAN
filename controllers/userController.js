@@ -159,13 +159,13 @@ const getUser = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such workout'})
+        return res.status(404).json({error: 'No such User'})
     }
 
     const course = await User.findById(id).select('-password')
 
     if (!course) {
-        return res.status(404).json({error: 'No such workout'})
+        return res.status(404).json({error: 'No such User'})
     }
 
     res.status(200).json(course)
@@ -173,6 +173,13 @@ const getUser = async (req, res) => {
 
 // create a new formation
 const createUser = async (req, res) => {
+
+    const file = req.file;
+    if (!file) return res.status(400).send('No image in the request')
+
+    const fileName = req.file.filename;
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+
     const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body
 
 
@@ -180,8 +187,8 @@ const createUser = async (req, res) => {
 
     // add to the database
     try {
-        let formateur = await User.create({firstName,lastName, email,isAdmin ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
-        res.status(200).json(formateur)
+        let user = await User.create({firstName,lastName, email,isAdmin,image : `${basePath}${fileName}` ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
+        res.status(200).json(user)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -197,13 +204,13 @@ const deleteUser = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such User'})
     }
 
     const Formateur = await User.findOneAndDelete({_id: id})
 
     if(!Formateur) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such User'})
     }
 
     res.status(200).json(Formateur)
@@ -214,7 +221,7 @@ const updateUser = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such User'})
     }
 
     const formateur = await User.findOneAndUpdate({_id: id}, {
@@ -222,7 +229,7 @@ const updateUser = async (req, res) => {
     })
 
     if (!formateur) {
-        return res.status(400).json({error: 'No such workout'})
+        return res.status(400).json({error: 'No such User'})
     }
 
     res.status(200).json(formateur)
