@@ -6,11 +6,11 @@ const {
     createUser,
     deleteUser,
     updateUser,
+    desaffectionApp,
     upload,
 } = require('../controllers/userController')
 
 const router = express.Router()
-
 //POST Login
 router.post('/user/login',loginRequest)
 
@@ -25,6 +25,8 @@ router.post('/user/register',upload.single('image') , createUser)
 
 // DELETE a formation
 router.delete('/user/:id', deleteUser)
+
+router.delete('/user/desaffection/:idA/:idF', desaffectionApp)
 
 // UPDATE a formation
 router.patch('/user/:id', updateUser)

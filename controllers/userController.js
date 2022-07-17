@@ -1,5 +1,7 @@
 const User = require('../models/user')
 const Course = require('../models/course')
+const CourseApprenant = require('../models/courseApprenant')
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
@@ -236,6 +238,30 @@ const updateUser = async (req, res) => {
 }
 
 
+const desaffectionApp = async (req, res) => {
+    const { idA,idF } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(idA)) {
+        return res.status(400).json({error: 'No such CourseApprenant'})
+    }
+
+    const courseApprenant = await CourseApprenant.findOneAndDelete({course: idF ,userA : idA}, {
+        ...req.body
+    });
+
+    const user = await User.findByIdAndUpdate({_id: courseApprenant.userA},{ $pull: { courseApprenants: courseApprenant._id } })
+
+    const course = await Course.findByIdAndUpdate({_id: courseApprenant.course},{ $pull: { courseApprenants: courseApprenant._id } })
+
+
+    if(!courseApprenant) {
+        return res.status(400).json({error: 'No such CourseApprenant'})
+    }
+
+    res.status(200).json(courseApprenant)
+}
+
+
 
 
 
@@ -245,6 +271,7 @@ module.exports = {
     getUser,
     createUser,
     deleteUser,
+    desaffectionApp,
     updateUser,
     upload,
 }
