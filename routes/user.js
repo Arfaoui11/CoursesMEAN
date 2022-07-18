@@ -11,6 +11,8 @@ const {
 } = require('../controllers/userController')
 
 const router = express.Router()
+
+
 //POST Login
 router.post('/user/login',loginRequest)
 
@@ -21,7 +23,7 @@ router.get('/user/', getUsers)
 router.get('/user/:id', getUser)
 
 // POST a new formation
-router.post('/user/register',upload.single('image') , createUser)
+router.post('/user/register',upload.single('file') , createUser)
 
 // DELETE a formation
 router.delete('/user/:id', deleteUser)

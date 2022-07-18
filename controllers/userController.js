@@ -182,14 +182,14 @@ const createUser = async (req, res) => {
     const fileName = req.file.filename;
     const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
-    const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body
+    const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body;
 
 
 
 
     // add to the database
     try {
-        let user = await User.create({firstName,lastName, email,isAdmin,image : `${basePath}${fileName}` ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
+        let user = await User.create({firstName,lastName, email,isAdmin,file : `${basePath}${fileName}` ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
         res.status(200).json(user)
     } catch (error) {
         res.status(400).json({ error: error.message })

@@ -9,15 +9,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum : ['IT', 'ART', 'CINEMA', 'MUSIC', 'DANCE', 'PHY', 'ECONOMIC', 'MARKETING'],
         default: 'IT',
-        required:true
     },
     type: {
         type: String,
         enum : ['STUDENT','ADMIN','SPUSER','FORMER',],
         default: 'SPUSER',
-        required:true
     },
-    image : {
+    file : {
         type :String,
         default: ''
     },
@@ -26,7 +24,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum : ['DISCIPLINED','WARNED','PUNISHED','EXCLUDED'],
         default: 'DISCIPLINED',
-        required:true
     },
     lastName: {
         type: String,
@@ -41,12 +38,10 @@ const userSchema = new mongoose.Schema({
         required:true
     },
     salary: {
-        type: Number,
-        required:true
+        type: Number
     },
     tarifHoraire: {
-        type: Number,
-        required:true
+        type: Number
     },
     age: {
         type: Number
