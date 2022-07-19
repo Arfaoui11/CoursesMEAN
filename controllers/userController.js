@@ -156,6 +156,14 @@ const getUsers = async (req, res) => {
     res.status(200).json(Users)
 }
 
+
+
+const getFormer = async (req, res) => {
+    const Users = await User.find({type : 'FORMER'}).select('-password')
+
+    res.status(200).json(Users)
+}
+
 // get a single formation
 const getUser = async (req, res) => {
     const { id } = req.params
@@ -268,6 +276,7 @@ const desaffectionApp = async (req, res) => {
 module.exports = {
     loginRequest,
     getUsers,
+    getFormer,
     getUser,
     createUser,
     deleteUser,

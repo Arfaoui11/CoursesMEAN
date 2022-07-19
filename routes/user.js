@@ -3,6 +3,7 @@ const {
     loginRequest,
     getUsers,
     getUser,
+    getFormer,
     createUser,
     deleteUser,
     updateUser,
@@ -18,6 +19,8 @@ router.post('/user/login',loginRequest)
 
 // GET all formations
 router.get('/user/', getUsers)
+
+router.get('/user/getFormer', getFormer)
 
 // GET a single formation
 router.get('/user/:id', getUser)
