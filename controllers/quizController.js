@@ -105,9 +105,7 @@ const SaveScore = async (req ,res) => {
 
 // create a new formation
 const getQuestionByQuiz = async (req, res) => {
-    const {id} = req.body
-
-
+    const {id} = req.params
 
 
     // add to the database
@@ -138,16 +136,9 @@ const addQuestionAndAsigntoQuiz = async (req, res) => {
         const question = await Question({quiz:quiz._id,title : title ,optionA : optionA ,optionB : optionB , optionC : optionC , optionD : optionD ,optionE : optionE , ans : ans ,chose : chose })
         await question.save();
 
-
-
-
         quiz.questions.push(question);
 
-
-
         await quiz.save();
-
-
 
         // save and redirect...
 

@@ -86,7 +86,7 @@ router.get('/video/:url', function(req, res) {
     }
 })
 
-router.post(`/courses/:id`,upload.single('image') ,createCourseAndAssignToFormer)
+router.post('/courses/:id',upload.single('image') ,createCourseAndAssignToFormer)
 
 router.put('/courses/multiple/:id',upload.array('images',10),updatreCourseAndAssignToFormer)
 

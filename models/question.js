@@ -31,7 +31,7 @@ const questionSchema = new mongoose.Schema({
     },
     chose: {
         type: Number,
-        required :true
+
     },
     quiz : {
         type: mongoose.Schema.Types.ObjectId,

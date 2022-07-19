@@ -41,7 +41,7 @@ const upload = multer({ storage: storage })
 
 const getCourses = async (req, res) => {
     const courses = await Formation.find({}).sort({createdAt: -1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
-    console.log(courses)
+
     res.status(200).json(courses)
 }
 
@@ -54,7 +54,7 @@ const getCourse = async (req, res) => {
     }
 
     const course = await Formation.findById(id).populate('userF').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
-    console.log(course.size)
+
 
     if (!course) {
         return res.status(404).json({error: 'No such Course'})
@@ -173,7 +173,7 @@ const getCoursesByFormer = async (req, res) => {
     if (req.query.userF) {
         filtre = {userF : req.query.userF.split(',')}
     }
-    console.log(req.query.userF.split(','))
+
 
     if (!mongoose.Types.ObjectId.isValid(req.query.userF.split(','))) {
         return res.status(404).json({error: 'No such Found'})
