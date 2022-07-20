@@ -7,7 +7,8 @@ const {
     getQuizQuestion,
     addQuestionAndAsigntoQuiz,
     DeleteQuiz,
-    DeleteQuestion
+    DeleteQuestion,
+    listQuiqtestedbuUser,
 } = require('../controllers/quizController')
 
 const router = express.Router()
@@ -25,7 +26,10 @@ router.post('/quiz/addQuiz/:id', addQuiz);
 
 
 
-router.post('/quiz/saveScore/:idU/:idF',SaveScore)
+router.post('/quiz/saveScore/:idU/:idC',SaveScore)
+
+
+router.post('/quiz/listQuiqtestedbuUser/:idU/:idC',listQuiqtestedbuUser)
 
 
 
@@ -34,6 +38,8 @@ router.post('/quiz/saveScore/:idU/:idF',SaveScore)
 router.get('/quiz/getQuestionByQuiz/:id', getQuestionByQuiz)
 
 router.get('/quiz/getQuizQuestion/:id', getQuizQuestion)
+
+
 
 
 router.post('/quiz/addQuestionAndAsigntoQuiz/:id', addQuestionAndAsigntoQuiz)

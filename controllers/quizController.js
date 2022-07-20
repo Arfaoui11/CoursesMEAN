@@ -65,6 +65,46 @@ const SaveScore = async (req ,res) => {
         const user = await User.findById(idU);
         const quiz = await Quiz.findById(idC);
 
+        const allResult = await Result.find({$and:[  {user :user.id} , {quiz :quiz.id}]});
+
+        if (allResult)
+        {
+          return  res.status(404).json({ error: 'This user is tested with this quiz' })
+        }
+
+
+        const result = await Result({quiz:quiz._id,user:user._id,username:username,totalCorrect : totalCorrect , correctAnswer : correctAnswer , inCorrectAnswer : inCorrectAnswer })
+        await result.save();
+
+
+
+
+        user.results.push(result);
+
+        quiz.results.push(result);
+
+        await user.save();
+        await quiz.save();
+
+
+        // save and redirect...
+
+        res.status(200).json(result)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+
+}
+
+const listQuiqtestedbuUser = async (req ,res) => {
+    const {idC,idU} = req.params;
+    const {username,totalCorrect,correctAnswer,inCorrectAnswer} = req.body;
+
+    // get the comment text and record post id
+    try {
+        const users = await getQuizByFormation(idC);
+        const quiz = await Quiz.findById(idC);
+
         const allResult = Result.find({$and:[  {user :user.id} , {quiz :quiz.id}]});
 
         if (allResult)
@@ -312,6 +352,7 @@ module.exports = {
     SaveScore,
     getQuestionByQuiz,
     getQuizQuestion,
+    listQuiqtestedbuUser,
     addQuestionAndAsigntoQuiz,
     DeleteQuiz,
     DeleteQuestion
