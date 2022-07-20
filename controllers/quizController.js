@@ -57,19 +57,24 @@ const addQuiz = async (req ,res) => {
 
 
 const SaveScore = async (req ,res) => {
-    const {idC,idU} = req.params;
+    const {idQ,idU} = req.params;
     const {username,totalCorrect,correctAnswer,inCorrectAnswer} = req.body;
+
+
+
+
 
     // get the comment text and record post id
     try {
+
         const user = await User.findById(idU);
-        const quiz = await Quiz.findById(idC);
+        const quiz = await Quiz.findById(idQ);
 
         const allResult = await Result.find({$and:[  {user :user.id} , {quiz :quiz.id}]});
 
-        if (allResult)
+        if (allResult.length > 0)
         {
-          return  res.status(404).json({ error: 'This user is tested with this quiz' })
+            return res.status(400).json({error: 'This user is tested with this quiz'})
         }
 
 
@@ -97,39 +102,40 @@ const SaveScore = async (req ,res) => {
 }
 
 const listQuiqtestedbuUser = async (req ,res) => {
+
     const {idC,idU} = req.params;
-    const {username,totalCorrect,correctAnswer,inCorrectAnswer} = req.body;
 
-    // get the comment text and record post id
+    const ids = [];
+    const list = [];
+
+
+
     try {
-        const users = await getQuizByFormation(idC);
-        const quiz = await Quiz.findById(idC);
 
-        const allResult = Result.find({$and:[  {user :user.id} , {quiz :quiz.id}]});
+        const course = await Course.findById(idC)
+        const quizzes = await Quiz.find({'course':course.id})
 
-        if (allResult)
-        {
-            res.status(404).json({ error: 'This user is tested with this quiz' })
-        }
+        const user = await User.findById(idU);
 
 
-        const result = await Result({quiz:quiz._id,user:user._id,username:username,totalCorrect : totalCorrect , correctAnswer : correctAnswer , inCorrectAnswer : inCorrectAnswer })
-        await result.save();
+        const results = await Result.find({});
+
+        results.forEach(t => {
+            if (t.user.toString() === user.id.toString() )
+            {
+                ids.push(t.quiz)
+            }
+        })
+
+
+        const quizTested = await Quiz.find({_id : { $in : ids}})
+
+        const newArray = quizzes.filter(
+            (array22) => !quizTested.some((array11) => array11.id === array22.id));
 
 
 
-
-        user.results.push(result);
-
-        quiz.results.push(result);
-
-        await user.save();
-        await quiz.save();
-
-
-        // save and redirect...
-
-        res.status(200).json(result)
+        res.status(200).json(newArray)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }

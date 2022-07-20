@@ -26,10 +26,10 @@ router.post('/quiz/addQuiz/:id', addQuiz);
 
 
 
-router.post('/quiz/saveScore/:idU/:idC',SaveScore)
+router.post('/quiz/saveScore/:idU/:idQ',SaveScore)
 
 
-router.post('/quiz/listQuiqtestedbuUser/:idU/:idC',listQuiqtestedbuUser)
+router.get('/quiz/listQuiqtestedbuUser/:idU/:idC',listQuiqtestedbuUser)
 
 
 
