@@ -113,7 +113,7 @@ const listQuiqtestedbuUser = async (req ,res) => {
     try {
 
         const course = await Course.findById(idC)
-        const quizzes = await Quiz.find({'course':course.id})
+        const quizzes = await Quiz.find({'course':course.id}).populate('course')
 
         const user = await User.findById(idU);
 
