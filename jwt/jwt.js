@@ -12,6 +12,7 @@ function authJwt() {
             {url : /\/api\/courses(.*)/ , methods : ['GET','OPTIONS'] },
             {url : /\/api\/user(.*)/ , methods : ['POST','OPTIONS'] },
             {url : /\/api\/video(.*)/ , methods : ['GET','OPTIONS'] },
+            {url : /\/api\/user(.*)/ , methods : ['POST','OPTIONS'] },
             {url : /\/api\/comment(.*)/ , methods : ['GET','POST','OPTIONS'] },
             {url : /\/public\/uploads(.*)/ , methods : ['GET','OPTIONS'] },
             {url : /\/api-swagger(.*)/ , methods : ['GET','POST','PUT','DELETE','OPTIONS'] },
