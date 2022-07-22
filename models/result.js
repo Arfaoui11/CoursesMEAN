@@ -7,18 +7,15 @@ const resultSchema = new mongoose.Schema({
     },
     totalCorrect: {
         type: Number,
-        required :true,
-        default : 0
+        required :true
     },
     correctAnswer: {
         type: Number,
-        required :true,
-        default : 0
+        required :true
     },
     inCorrectAnswer: {
         type: Number,
-        required :true,
-        default : 0
+        required :true
     },
     quiz : {
         type: mongoose.Schema.Types.ObjectId,

@@ -106,14 +106,14 @@ const listQuiqtestedbuUser = async (req ,res) => {
     const {idC,idU} = req.params;
 
     const ids = [];
-    const list = [];
+
 
 
 
     try {
 
         const course = await Course.findById(idC)
-        const quizzes = await Quiz.find({'course':course.id}).populate('course')
+        const quizzes = await Quiz.find({'course':course.id})
 
         const user = await User.findById(idU);
 
@@ -130,7 +130,7 @@ const listQuiqtestedbuUser = async (req ,res) => {
 
         const quizTested = await Quiz.find({_id : { $in : ids}})
 
-        const newArray = quizzes.filter(
+        const newArray =  quizzes.filter(
             (array22) => !quizTested.some((array11) => array11.id === array22.id));
 
 
