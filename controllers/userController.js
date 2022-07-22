@@ -262,6 +262,8 @@ const desaffectionApp = async (req, res) => {
     const course = await Course.findByIdAndUpdate({_id: courseApprenant.course},{ $pull: { courseApprenants: courseApprenant._id } })
 
 
+
+
     if(!courseApprenant) {
         return res.status(400).json({error: 'No such CourseApprenant'})
     }

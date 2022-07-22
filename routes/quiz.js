@@ -7,6 +7,7 @@ const {
     getQuizQuestion,
     addQuestionAndAsigntoQuiz,
     DeleteQuiz,
+    DeleteResults,
     DeleteQuestion,
     listQuiqtestedbuUser,
 } = require('../controllers/quizController')
@@ -50,6 +51,8 @@ router.post('/quiz/addQuestionAndAsigntoQuiz/:id', addQuestionAndAsigntoQuiz)
 
 
 router.delete('/quiz/DeleteQuiz/:id', DeleteQuiz)
+
+router.delete('/quiz/DeleteResults/:idU/:idF', DeleteResults)
 
 
 router.delete('/quiz/DeleteQuestion/:id', DeleteQuestion)

@@ -268,7 +268,7 @@ const getQuizQuestion = async (req, res) => {
 
 
         res.status(200).json(listQuestions)
-    }catch (e) {
+    }catch (error) {
         res.status(400).json({ error: error.message })
     }
 
@@ -317,35 +317,70 @@ const DeleteQuestion = async (req, res) => {
     console.log(quiz)
 
 
-  /* Quiz.findById(question.quiz._id)
-        .then(quiz => {
-            console.log(quiz)
-            if (!quiz) {
-                return res.status(500).json({ message: "Quiz not found" });
-            } else {
-                Quiz.questions.pull(question._id);
 
-                Quiz.save()
-                    .then(response => {
-                        return res.status(200).json( { message: 'Id deleted'} );
-                    })
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        });
-
-    //quiz.questions.delete(question._id);
-    //quiz.save();
-
-
-
-   */
     if (!question) {
         return res.status(400).json({error: 'No such Question'})
     }
 
     res.status(200).json(question)
+}
+
+
+const DeleteResults = async (req, res) => {
+    const {idU,idF} = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(idU)) {
+        return res.status(400).json({error: 'No such User or Courses'})
+    }
+
+    try {
+
+        const course =  await Course.findById(idF);
+        const user  = await User.findById(idU);
+
+
+
+
+        for (const t of course.quizzes) {
+
+            const resulte = await Result.find({'quiz' : t , 'user': user._id}).populate('quiz')
+         //   console.log(resulte[0]._id)
+
+           // resulte.delete();
+
+            if (resulte.length > 0)
+            {
+                const results = await Result.findByIdAndDelete(resulte[0]._id).populate('user quiz');
+
+
+                console.log(results)
+
+                  const user = await User.findByIdAndUpdate(results.user._id,{ $pull: { results: results._id } })
+
+
+                  const quiz = await Quiz.findByIdAndUpdate(results.quiz._id,{ $pull: { results: results._id } })
+            }
+
+
+        }
+
+
+
+
+        if (!course.quizzes) {
+            return res.status(400).json({error: 'No such Quiz have in this courses'})
+        }
+
+        res.status(200).json(course)
+
+    }catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+
+
+
+
+
 }
 
 
@@ -358,6 +393,7 @@ module.exports = {
     SaveScore,
     getQuestionByQuiz,
     getQuizQuestion,
+    DeleteResults,
     listQuiqtestedbuUser,
     addQuestionAndAsigntoQuiz,
     DeleteQuiz,
