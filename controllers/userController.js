@@ -1,6 +1,9 @@
 const User = require('../models/user')
 const Course = require('../models/course')
 const CourseApprenant = require('../models/courseApprenant')
+const Result = require('../models/result')
+const Quiz = require('../models/quiz')
+const DeleteResults =   require('../controllers/quizController')
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
@@ -252,6 +255,9 @@ const desaffectionApp = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(idA)) {
         return res.status(400).json({error: 'No such CourseApprenant'})
     }
+    try {
+
+
 
     const courseApprenant = await CourseApprenant.findOneAndDelete({course: idF ,userA : idA}, {
         ...req.body
@@ -264,11 +270,55 @@ const desaffectionApp = async (req, res) => {
 
 
 
-    if(!courseApprenant) {
-        return res.status(400).json({error: 'No such CourseApprenant'})
+
+        for (const t of course.quizzes) {
+
+            const resulte = await Result.find({'quiz' : t , 'user': user._id}).populate('quiz')
+            //   console.log(resulte[0]._id)
+
+            // resulte.delete();
+
+
+            for(const r of resulte)
+            {
+            console.log(r)
+
+                    const results = await Result.findByIdAndDelete(r._id).populate('user quiz');
+
+
+                   // console.log(results)
+
+                    const user = await User.findByIdAndUpdate(results.user._id,{ $pull: { results: results._id } })
+
+
+                    const quiz = await Quiz.findByIdAndUpdate(results.quiz._id,{ $pull: { results: results._id } })
+
+            }
+
+
+
+        }
+        if(!courseApprenant) {
+            return res.status(400).json({error: 'No such CourseApprenant'})
+        }
+
+        res.status(200).json(courseApprenant);
+
+
+
+        if (!coursea.quizzes) {
+            return res.status(400).json({error: 'No such Quiz have in this courses'})
+        }
+
+      //  res.status(200).json(course)
+
+    }catch (error) {
+        res.status(400).json({ error: error.message })
     }
 
-    res.status(200).json(courseApprenant)
+
+
+
 }
 
 
