@@ -29,33 +29,53 @@ const getRatingByCourses = async (req, res) => {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    let SomRating = 0 ;
-
-    const course = await Course.find({_id: id})
+    let SomRating = Float32Array = 0.0 ;
 
 
 
-
+    const course = await Course.findById(id);
 
 
 
     const list = await Rating.find({_id : { $in : course.ratings}}).populate('user course')
 
+    if (!list) {
+        return res.status(404).json({error: 'No such Ratings'})
+    }
+
+    let date = new Date(2022,1,1,12,1,1,1);
+
+
+   list.forEach(r => {
+
+       let createAt = new Date(r.createdAt);
+
+
+        if (createAt > date) {
+            date = createAt;
+        }
+    });
+
+
+
+
+
+const rat = await Rating.findOne({createdAt : date});
+   // console.log(rat)
+
 
     list.forEach(t => {
         SomRating += (t.typeRating)
 
-
-
     });
 
-    const som = (SomRating/list.length);
 
-    if (!som) {
-        return res.status(404).json({error: 'No such Course'})
-    }
 
-    res.status(200).json(som)
+    let Overall  = ( SomRating/list.length);
+
+
+
+    res.status(200).json(Overall)
 
 }
 
@@ -65,7 +85,7 @@ const getRatingByCourses = async (req, res) => {
 const assignRatingToCourses = async (req, res) => {
     // find out which post you are commenting
     const {idF,idU} = req.params;
-    const {ratings} = req.body;
+    const {ratings,Overall} = req.body;
 
 
 
@@ -82,10 +102,14 @@ const assignRatingToCourses = async (req, res) => {
 
         const r = await Rating.find({course:formation._id,user:student._id})
 
-        if(r.length > 0){
+      /*  if(r.length > 0){
             return res.status(404).json({error: 'this user is rat this courses '})
         }
 
+       */
+        const list = await Rating.find({_id : { $in : formation.ratings}}).populate('user course')
+
+        let som = ((Overall * (list.length )) + ratings) / (list.length + 1);
 
         const rating = await Rating({course:formation._id,user:student._id,typeRating : ratings})
         await rating.save();
@@ -101,11 +125,14 @@ const assignRatingToCourses = async (req, res) => {
         await formation.save();
 
 
+
+
+
         // save and redirect...
         //send email to anather mail
         mailers.mail("mahdijr2015@gmail.com",formation.title,student.lastName,student.file)
 
-        res.status(200).json(rating)
+        res.status(200).json(som)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
