@@ -107,9 +107,11 @@ const assignRatingToCourses = async (req, res) => {
         }
 
 
-        const list = await Rating.find({_id : { $in : formation.ratings}}).populate('user course')
+      /*  const list = await Rating.find({_id : { $in : formation.ratings}}).populate('user course')
 
         let som = ((Overall * (list.length )) + ratings) / (list.length + 1);
+
+       */
 
 
 
