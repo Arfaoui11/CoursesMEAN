@@ -85,7 +85,7 @@ const rat = await Rating.findOne({createdAt : date});
 const assignRatingToCourses = async (req, res) => {
     // find out which post you are commenting
     const {idF,idU} = req.params;
-    const {ratings,Overall} = req.body;
+    const {typeRating} = req.body;
 
 
 
@@ -102,16 +102,20 @@ const assignRatingToCourses = async (req, res) => {
 
         const r = await Rating.find({course:formation._id,user:student._id})
 
-      /*  if(r.length > 0){
+        if(r.length > 0){
             return res.status(404).json({error: 'this user is rat this courses '})
         }
 
-       */
+
         const list = await Rating.find({_id : { $in : formation.ratings}}).populate('user course')
 
         let som = ((Overall * (list.length )) + ratings) / (list.length + 1);
 
-        const rating = await Rating({course:formation._id,user:student._id,typeRating : ratings})
+
+
+
+
+        const rating = await Rating({course:formation._id,user:student._id,typeRating : typeRating})
         await rating.save();
 
 
@@ -132,7 +136,7 @@ const assignRatingToCourses = async (req, res) => {
         //send email to anather mail
         mailers.mail("mahdijr2015@gmail.com",formation.title,student.lastName,student.file)
 
-        res.status(200).json(som)
+        res.status(200).json(rating)
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
