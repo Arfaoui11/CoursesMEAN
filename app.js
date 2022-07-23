@@ -7,6 +7,7 @@ const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
 const CommentRoutes = require('./routes/comment')
 const QuizRoutes = require('./routes/quiz')
+const RatingRoutes = require('./routes/rating')
 const cookieParser = require('cookie-parser')
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -99,7 +100,7 @@ app.use(function (req,res,next) {
 
  */
 
-app.use('/api', CoursesRoutes , UserRoutes , CommentRoutes ,QuizRoutes)
+app.use('/api', CoursesRoutes , UserRoutes , CommentRoutes ,QuizRoutes,RatingRoutes)
 
 
 

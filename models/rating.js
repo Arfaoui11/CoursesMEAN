@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const ratingSchema = new mongoose.Schema({
     typeRating: {
-        type: String,
-        enum : ['LIKE', 'DISLIKE', 'ANGRY', 'SAD', 'HAPPY'],
+        type: Number,
+        enum : [1, 2, 3, 4, 5],
         required:true
     },
     course : {

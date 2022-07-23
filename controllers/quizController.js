@@ -348,12 +348,12 @@ const DeleteResults = async (req, res) => {
 
            // resulte.delete();
 
-            if (resulte.length > 0)
+            for(const r of resulte)
             {
-                const results = await Result.findByIdAndDelete(resulte[0]._id).populate('user quiz');
+                const results = await Result.findByIdAndDelete(r._id).populate('user quiz');
 
 
-                console.log(results)
+          
 
                   const user = await User.findByIdAndUpdate(results.user._id,{ $pull: { results: results._id } })
 
