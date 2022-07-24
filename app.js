@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const express = require('express')
 const cors = require('cors')
+
 const mongoose = require('mongoose')
 const CoursesRoutes = require('./routes/course')
 const UserRoutes = require('./routes/user')
@@ -13,6 +14,7 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const morgan = require('morgan')
 const nodemailer = require('nodemailer');
+
 
 
 
@@ -30,6 +32,62 @@ const errorHandler = require('./jwt/error-handler')
 
 // express app
 const app = express();
+
+////////////////////////////////
+const http = require('http').createServer(app);
+
+const io = require('socket.io')(http, {
+    cors: {
+        origin: '*'
+    }
+});
+
+app.get('/', (req, res) => {
+    res.send('Heelloaa world sss');
+})
+
+let userList = new Map();
+
+io.on('connection', (socket) => {
+
+    console.log('char app connected')
+    let userName = socket.handshake.query.userName;
+    addUser(userName, socket.id);
+
+    socket.broadcast.emit('user-list', [...userList.keys()]);
+    socket.emit('user-list', [...userList.keys()]);
+
+    socket.on('message', (msg) => {
+        socket.broadcast.emit('message-broadcast', {message: msg, userName: userName});
+    })
+
+    socket.on('disconnect', (reason) => {
+        console.log('user logout')
+        removeUser(userName, socket.id);
+    })
+});
+
+function addUser(userName, id) {
+    if (!userList.has(userName)) {
+        userList.set(userName, new Set(id));
+    } else {
+        userList.get(userName).add(id);
+    }
+}
+
+function removeUser(userName, id) {
+    if (userList.has(userName)) {
+        let userIds = userList.get(userName);
+        if (userIds.size == 0) {
+            userList.delete(userName);
+        }
+    }
+}
+
+
+
+
+//////////////////////////////////
 app.use(morgan('tiny'));
 
 // middleware
@@ -63,9 +121,9 @@ app.use(express.urlencoded({ extended: true}))
 
 
 
-app.use(authJwt.apply());
+//app.use(authJwt.apply());
 
-app.use(errorHandler)
+//app.use(errorHandler)
 
 /*
 // Extended: https://swagger.io/specification/#infoObject
@@ -111,7 +169,7 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('connected to database')
         // listen to port
-        app.listen(process.env.PORT, () => {
+        http.listen(process.env.PORT, () => {
             console.log('listening for requests on port', process.env.PORT)
         })
     })

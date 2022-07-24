@@ -25,6 +25,8 @@
     "nodemailer": "^6.7.7",
     "nodemon": "^2.0.16",
     "pug": "2.0.0-beta11",
+    "socket.io": "^4.5.1",
+    "socket.io-client": "^4.5.1",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0"
   },
