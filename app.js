@@ -15,7 +15,9 @@ const swaggerUi = require("swagger-ui-express");
 const morgan = require('morgan')
 const nodemailer = require('nodemailer');
 
+const pdfa = require('./pdf/pdfDoc')
 
+pdfa('public/certif/Certif.pdf','public/certif/output.pdf');
 
 //const swaggerUi = require('swagger-ui-express'),
 //swaggerDocument = require('./swagger.json');
@@ -52,13 +54,13 @@ io.on('connection', (socket) => {
     let userName = socket.handshake.query.userName;
     addUser(userName, socket.id);
 
-    let user  = userName.split(',');
+   // let user  = userName.split(',');
 
     socket.broadcast.emit('user-list', [...userList.keys()]);
     socket.emit('user-list', [...userList.keys()]);
 
     socket.on('message', (msg) => {
-        socket.broadcast.emit('message-broadcast', {message: msg, userName: user});
+        socket.broadcast.emit('message-broadcast', {message: msg, userName: userName});
     })
 
     socket.on('disconnect', (reason) => {
@@ -69,10 +71,10 @@ io.on('connection', (socket) => {
 
 function addUser(userName, id) {
 
-    let user  = userName.split(',');
+    //let user  = userName.split(',');
 
     if (!userList.has(userName)) {
-        userList.set({"userName":user[0],"image": user[1]}, new Set(id));
+        userList.set(userName, new Set(id));
     } else {
         userList.get(userName).add(id);
     }
