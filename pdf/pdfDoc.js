@@ -1,6 +1,6 @@
  const {PDFDocument, StandardFonts, rgb} = require('pdf-lib')
 const {readFile,writeFile} = require('fs.promises');
-
+ const fs = require('fs');
 async function createPdf(input ,output) {
 
     try {
@@ -26,6 +26,25 @@ async function createPdf(input ,output) {
             size: 30,
             font: timesRomanFont,
             color: rgb(0, 0.53, 0.71),
+        })
+
+        const img = await pdfDoc.embedPng(fs.readFileSync('./public/uploads/poster.png'));
+
+      /*  const imagePage = pdfDoc.insertPage(0);
+        imagePage.drawImage(img, {
+            x: 0,
+            y: 0,
+            width: imagePage.getWidth(),
+            height: imagePage.getHeight()
+        });
+
+
+       */
+
+      pages[0].drawImage(img, {
+            x: 15,
+                y: 20,
+
         })
 
 
