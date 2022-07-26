@@ -1,35 +1,81 @@
  const {PDFDocument, StandardFonts, rgb} = require('pdf-lib')
 const {readFile,writeFile} = require('fs.promises');
  const fs = require('fs');
-async function createPdf(input ,output) {
+const QRCode = require('qrcode');
+
+async function createPdf(course,user, input ,output,) {
 
     try {
         const pdfDoc = await PDFDocument.load(await readFile(input) )
 
-        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-        const pages = pdfDoc.getPages()
+        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic)
+        const pages = pdfDoc.getPages();
+
+
+        const   nbrheurs = " Courses  : "+course.nbrHours +" hours total ";
+        const Domain = " Domain : "+course.domain.toUpperCase();
+        const Formateur = course.userF.lastName.toUpperCase();
+        const Title = "Title : "+ course.title;
+        const User = "Username : "+ user.firstName +" "+user.lastName;
+
 
 
         const fontSize = 30;
-        pages[0].drawText('You can modify PDFs too!', {
-            x: 380,
-            y: 380  ,
-                size: fontSize,
+        pages[0].drawText(Title, {
+            x: 400,
+            y: 350  ,
+                size: 45,
                 font: timesRomanFont,
                 color: rgb(0, 0.53, 0.71),
         })
 
 
-        pages[0].drawText('You can !', {
-            x: 380,
-            y: 50,
-            size: 30,
+        pages[0].drawText(Domain, {
+            x: 400,
+            y: 240,
+            size: 16,
+            font: timesRomanFont,
+            color: rgb(0, 0.53, 0.71),
+        })
+        pages[0].drawText(User, {
+            x: 400,
+            y: 220  ,
+            size: 16,
             font: timesRomanFont,
             color: rgb(0, 0.53, 0.71),
         })
 
-        const img = await pdfDoc.embedPng(fs.readFileSync('./public/uploads/poster.png'));
 
+        pages[0].drawText(Formateur, {
+            x: 490,
+            y: 179,
+            size: 16,
+            font: timesRomanFont,
+            color: rgb(0, 0.53, 0.71),
+        })
+        pages[0].drawText(new Date().toUTCString(), {
+            x: 460,
+            y: 109  ,
+            size: 16,
+            font: timesRomanFont,
+            color: rgb(0, 0.53, 0.71),
+        })
+
+
+        pages[0].drawText(nbrheurs, {
+            x: 500,
+            y: 140,
+            size: 16,
+            font: timesRomanFont,
+            color: rgb(0, 0.53, 0.71),
+        })
+
+        const img = await pdfDoc.embedPng(fs.readFileSync('./public/uploads/1.png'));
+        const img1 = await pdfDoc.embedPng(fs.readFileSync('./public/mybadges/goldbadge.png'));
+
+
+
+        //img.scaleToFit(15,20)
       /*  const imagePage = pdfDoc.insertPage(0);
         imagePage.drawImage(img, {
             x: 0,
@@ -40,12 +86,30 @@ async function createPdf(input ,output) {
 
 
        */
+        try {
+            const qr = await QRCode.toFile(`./public/uploads/1.png`,'hello');
+        }catch (e) {
+            console.log(e);
+        }
+
+
+
 
       pages[0].drawImage(img, {
-            x: 15,
-                y: 20,
-
+            x: 400,
+                y: 480,
+          width: 70,
+          height: 70
         })
+
+        pages[0].drawImage(img1, {
+            x: 520,
+            y: 480,
+            width: 100,
+            height: 100
+        })
+
+
 
 
 

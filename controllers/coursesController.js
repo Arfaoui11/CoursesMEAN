@@ -12,7 +12,7 @@ const mongoose = require('mongoose')
 
 const multer = require('multer')
 
-
+const pdfa = require('../pdf/pdfDoc')
 
 
 
@@ -332,6 +332,9 @@ const assignApprenantToCourse = async (req, res) => {
         // save and redirect...
         //send email to anather mail
         mailers.mail("mahdijr2015@gmail.com",formation.title,formation.userF.lastName,formation.image)
+
+        pdfa(formation,apprenant,'public/certif/Certif.pdf','public/certif/output.pdf');
+
 
         res.status(200).json(courseApp)
     } catch (error) {

@@ -10,18 +10,18 @@ const CommentRoutes = require('./routes/comment')
 const QuizRoutes = require('./routes/quiz')
 const RatingRoutes = require('./routes/rating')
 const cookieParser = require('cookie-parser')
-const swaggerJsDoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
+
 const morgan = require('morgan')
 const nodemailer = require('nodemailer');
 
-const pdfa = require('./pdf/pdfDoc')
 
-pdfa('public/certif/Certif.pdf','public/certif/output.pdf');
+
+
+
+
 
 //const swaggerUi = require('swagger-ui-express'),
 //swaggerDocument = require('./swagger.json');
-
 
 
 
@@ -42,9 +42,7 @@ const io = require('socket.io')(http, {
     }
 });
 
-app.get('/', (req, res) => {
-    res.send('Heelloaa world sss');
-})
+
 
 let userList = new Map();
 

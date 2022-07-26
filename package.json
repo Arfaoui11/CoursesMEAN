@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@handlebars/allow-prototype-access": "^1.0.5",
+    "ba64": "^3.0.9",
     "bcryptjs": "^2.4.3",
     "body-parser": "latest",
     "cookie-parser": "^1.4.6",
@@ -35,8 +36,10 @@
     "ws": "latest"
   },
   "devDependencies": {
+    "canvas": "^2.9.3",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.0",
+    "qr-image": "^3.2.0",
     "uuid": "^8.3.2"
   },
   "description": "",
