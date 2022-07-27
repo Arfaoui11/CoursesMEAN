@@ -147,6 +147,9 @@ const assignApprenantToComment = async (req, res) => {
         const user = await User.findById(idU)
         const formation = await Course.findById(idF)
 
+
+
+
         if (user.type.toString() !== "STUDENT")
         {
             res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })

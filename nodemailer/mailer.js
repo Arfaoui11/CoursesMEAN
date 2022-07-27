@@ -21,7 +21,7 @@ const Services =   {
          attachments: [
              {
                  // use URL as an attachment
-                 filename: 'files.jpeg',
+                 filename: 'Certif.pdf',
                  path: `${path}`
              } ]
      };

@@ -1,6 +1,10 @@
 const Formation = require('../models/course')
 const User = require('../models/user')
 
+
+const Quiz = require('../models/quiz')
+const Result = require('../models/result')
+
 const cron = require('node-cron');
 const fs = require('fs');
 const mailers = require('../nodemailer/mailer')
@@ -19,7 +23,7 @@ const pdfa = require('../pdf/pdfDoc')
 
 // Schedule tasks to be run on the server.
 cron.schedule('* * * * *', function() {
-    // getCourses();
+     CertifactionStudents();
 });
 
 
@@ -41,7 +45,7 @@ const upload = multer({ storage: storage })
 
 const getCourses = async (req, res) => {
     const courses = await Formation.find({}).sort({createdAt: -1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
-
+    //console.log(courses)
     res.status(200).json(courses)
 }
 
@@ -309,11 +313,17 @@ const assignApprenantToCourse = async (req, res) => {
         const apprenant = await User.findById(idA)
         const formation = await Formation.findById(idF).populate('userF')
 
+
+
+
         if (apprenant.type.toString() !== "STUDENT")
         {
             res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
         }
 
+
+       // const nbrapp = await getNbrApprenantByFormation({id : formation._id},{})
+       // console.log(nbrapp)
 
         const courseApp = await CourseApprenant({course:formation._id,userA:apprenant._id})
         await courseApp.save();
@@ -343,7 +353,57 @@ const assignApprenantToCourse = async (req, res) => {
 
 }
 
+async function getScore (idC,idU) {
 
+    const ids = [];
+    try {
+
+        const course = await Formation.findById(idC)
+        const quizzes = await Quiz.find({'course':course.id})
+
+        const user = await User.findById(idU);
+
+
+        const results = await Result.find({'user':user.id}).populate('quiz')
+
+
+
+
+        results.forEach(
+            (array22) => quizzes.some((array11) => {
+                if(array22.quiz.id === array11.id){
+                    ids.push(array22)
+                }
+            }));
+
+
+
+        let somme = 0 ;
+
+        if (ids.length ===5)
+        {
+            ids.forEach(t=> {
+                somme += t.totalCorrect;
+            })
+
+            console.log(somme)
+
+            return  somme;
+        }else {
+            return 0;
+        }
+
+
+
+
+
+
+
+    }catch (e) {
+        console.log(e.message)
+    }
+
+}
 
 
 
@@ -385,6 +445,47 @@ const updateCourse = async (req, res) => {
 }
 
 
+const CertifactionStudents = async (req, res) => {
+
+
+   try {
+
+        const courses = await Formation.find({});
+        const useres = await User.find({'type': 'STUDENT'})
+
+       for (const array22 of courses) {
+           for (const array11 of useres)  {
+
+               const score = await getScore(array22.id, array11.id);
+                console.log(" " +array22.id +" "+ array11.id )
+               if (score >= 100) {
+                   console.log(" Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ")
+                   mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\certif\\output.pdf')
+
+
+                  await pdfa(array22, array11, 'public/certif/Certif.pdf', 'public/certif/output.pdf');
+               }
+
+
+           }
+       }
+
+
+
+
+   }catch (e) {
+
+       console.log(e.message)
+
+   }
+
+
+}
+
+
+
+
+
 
 
 
@@ -395,6 +496,7 @@ const updateCourse = async (req, res) => {
 module.exports = {
     getCourses,
     getCourse,
+    getScore,
     createCourse,
     createCourseAndAssignToFormer,
     countCoursesByFormer,

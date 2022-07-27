@@ -306,14 +306,14 @@ const desaffectionApp = async (req, res) => {
 
 
 
-        if (!coursea.quizzes) {
+        if (!course.quizzes) {
             return res.status(400).json({error: 'No such Quiz have in this courses'})
         }
 
       //  res.status(200).json(course)
 
     }catch (error) {
-        res.status(400).json({ error: error.message })
+        return  res.status(400).json({ error: error.message })
     }
 
 

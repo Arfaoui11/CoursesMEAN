@@ -128,10 +128,11 @@ const listQuiqtestedbuUser = async (req ,res) => {
         })
 
 
+
         const quizTested = await Quiz.find({_id : { $in : ids}})
 
         const newArray =  quizzes.filter(
-            (array22) => !quizTested.some((array11) => array11.id === array22.id));
+           (array22) => !quizTested.some((array11) => array11.id === array22.id));
 
 
 

@@ -83,9 +83,9 @@ async function createPdf(course,user, input ,output,) {
             width: imagePage.getWidth(),
             height: imagePage.getHeight()
         });
-
-
        */
+
+
         try {
             const qr = await QRCode.toFile(`./public/uploads/1.png`,'hello');
         }catch (e) {

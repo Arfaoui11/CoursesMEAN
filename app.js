@@ -99,6 +99,7 @@ app.use(morgan('tiny'));
 
 app.use('/public/uploads',express.static(__dirname +'/public/uploads'))
 
+
 // use of body parser
 /*app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
