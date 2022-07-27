@@ -1,5 +1,6 @@
 const Formation = require('../models/course')
 const User = require('../models/user')
+const Certificate = require('../models/certificate')
 
 
 const Quiz = require('../models/quiz')
@@ -471,11 +472,27 @@ const CertifactionStudents = async (req, res) => {
                const score = await getScore(array22.id, array11.id);
 
                if (score >= 100) {
+
+                   const certificate = await Certificate({course:array22.id,user:array11.id,name : array22.title,path : 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\certif\\'+array11.id+'.pdf'})
+                   await certificate.save();
+
+
+
+
+                   array11.Certificates.push(certificate);
+
+                   array22.certificates.push(certificate);
+
+                   await array11.save();
+                   await array22.save();
+
+                   await pdfa(array22, array11, 'public/certif/Certif.pdf', 'public/certif/'+array11.id+'.pdf');
+
                    console.log(" Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ")
-                   mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\certif\\output.pdf')
+                   mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\certif\\'+array11.id+'.pdf')
 
 
-                  await pdfa(array22, array11, 'public/certif/Certif.pdf', 'public/certif/output.pdf');
+
                }
 
 
