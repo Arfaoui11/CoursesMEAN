@@ -13,15 +13,15 @@ async function createPdf(course,user, input ,output,) {
 
 
         const   nbrheurs = " Courses  : "+course.nbrHours +" hours total ";
-        const Domain = " Domain : "+course.domain.toUpperCase();
-        const Formateur = course.userF.lastName.toUpperCase();
+        const Domain = " Domain : "+course.domain;
+        const Formateur = "(Mr/Mrs) "+course.userF.lastName;
         const Title = "Title : "+ course.title;
         const User = "Username : "+ user.firstName +" "+user.lastName;
 
 
 
         const fontSize = 30;
-        pages[0].drawText(Title, {
+        pages[0].drawText(Title.toUpperCase(), {
             x: 400,
             y: 350  ,
                 size: 45,
@@ -30,7 +30,7 @@ async function createPdf(course,user, input ,output,) {
         })
 
 
-        pages[0].drawText(Domain, {
+        pages[0].drawText(Domain.toUpperCase(), {
             x: 400,
             y: 240,
             size: 16,

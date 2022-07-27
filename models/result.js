@@ -19,7 +19,7 @@ const resultSchema = new mongoose.Schema({
     },
     status : {
         type: Boolean,
-        required :true
+        required :false
     },
     quiz : {
         type: mongoose.Schema.Types.ObjectId,

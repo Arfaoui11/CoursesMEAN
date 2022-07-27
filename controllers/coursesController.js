@@ -398,7 +398,7 @@ async function  getScore  (idC,idU) {
                 );
                 }
             }
-            console.log(somme)
+
 
             return  somme;
         }else {
@@ -462,14 +462,14 @@ const CertifactionStudents = async (req, res) => {
 
    try {
 
-        const courses = await Formation.find({});
+        const courses = await Formation.find({}).populate('userF');
         const useres = await User.find({'type': 'STUDENT'})
 
        for (const array22 of courses) {
            for (const array11 of useres)  {
 
                const score = await getScore(array22.id, array11.id);
-                console.log(" " +array22.id +" "+ array11.id )
+
                if (score >= 100) {
                    console.log(" Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ")
                    mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\certif\\output.pdf')
