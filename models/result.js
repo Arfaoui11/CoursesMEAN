@@ -17,6 +17,10 @@ const resultSchema = new mongoose.Schema({
         type: Number,
         required :true
     },
+    status : {
+        type: Boolean,
+        required :true
+    },
     quiz : {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Quiz"

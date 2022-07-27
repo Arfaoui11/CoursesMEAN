@@ -353,7 +353,7 @@ const assignApprenantToCourse = async (req, res) => {
 
 }
 
-async function getScore (idC,idU) {
+async function  getScore  (idC,idU) {
 
     const ids = [];
     try {
@@ -382,10 +382,22 @@ async function getScore (idC,idU) {
 
         if (ids.length ===5)
         {
-            ids.forEach(t=> {
+            for (const t of ids)
+            {
                 somme += t.totalCorrect;
-            })
 
+            }
+            if (somme >= 100)
+            {
+                for (const t of ids)
+                {
+                const result = await Result.findByIdAndUpdate(t.id, {
+                        status : false
+                    },
+                    { new:true }
+                );
+                }
+            }
             console.log(somme)
 
             return  somme;
