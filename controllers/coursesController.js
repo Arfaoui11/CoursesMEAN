@@ -371,7 +371,7 @@ async function  getScore  (idC,idU) {
 
         results.forEach(
             (array22) => quizzes.some((array11) => {
-                if(array22.quiz.id === array11.id){
+                if(array22.quiz.id === array11.id && array22.status !== true){
                     ids.push(array22)
                 }
             }));
@@ -392,7 +392,7 @@ async function  getScore  (idC,idU) {
                 for (const t of ids)
                 {
                 const result = await Result.findByIdAndUpdate(t.id, {
-                        status : false
+                        status : true
                     },
                     { new:true }
                 );
