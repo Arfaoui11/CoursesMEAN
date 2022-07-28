@@ -1,13 +1,12 @@
 const Formation = require('../models/course')
 const User = require('../models/user')
 const Certificate = require('../models/certificate')
-
-
+const path = require('path');
+const http = require('http');
+const fs = require('fs');
 const Quiz = require('../models/quiz')
 const Result = require('../models/result')
-
 const cron = require('node-cron');
-const fs = require('fs');
 const mailers = require('../nodemailer/mailer')
 
 const CourseApprenant = require('../models/courseApprenant')
@@ -438,6 +437,26 @@ const deleteCourse = async (req, res) => {
     res.status(200).json(course)
 }
 
+const getCertifcateByCoursesAndUser = async (req, res) => {
+
+    const { idC,idU } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(idC)) {
+        return res.status(400).json({error: 'No such Course'})
+    }
+
+    const user = await User.findById(idU)
+    const course = await Formation.findById(idC)
+
+    const certif = await Certificate.findOne({'user':user.id,'course':course.id })
+
+    if(!certif) {
+        return res.status(400).json({error: 'No such Course'})
+    }
+
+    res.status(200).json(certif)
+}
+
 // update a formation
 const updateCourse = async (req, res) => {
     const { id } = req.params
@@ -458,6 +477,16 @@ const updateCourse = async (req, res) => {
 }
 
 
+// update a formation
+const DownloadFiles = async (req, res,next) => {
+    let filepath = path.join( 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\uploads') + '\\' + req.body.filename;
+
+    res.sendFile(filepath);
+
+    };
+
+
+
 const CertifactionStudents = async (req, res) => {
 
 
@@ -473,7 +502,9 @@ const CertifactionStudents = async (req, res) => {
 
                if (score >= 100) {
 
-                   const certificate = await Certificate({course:array22.id,user:array11.id,name : array22.title,path : 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\certif\\'+array11.id+'.pdf'})
+
+                   const lien = new Date().toISOString();
+                   const certificate = await Certificate({course:array22.id,user:array11.id,name : array22.title,path : array11.id+array22.id+'.pdf'})
                    await certificate.save();
 
 
@@ -486,10 +517,10 @@ const CertifactionStudents = async (req, res) => {
                    await array11.save();
                    await array22.save();
 
-                   await pdfa(array22, array11, 'public/certif/Certif.pdf', 'public/certif/'+array11.id+'.pdf');
+                   await pdfa(array22, array11, 'public/certif/Certif.pdf', 'public/uploads/'+array11.id+array22.id+'.pdf');
 
                    console.log(" Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ")
-                   mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, 'C:\\Users\\LEGION-5\\WebstormProjects\\CoursesMERN\\public\\certif\\'+array11.id+'.pdf')
+                   mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, './public/uploads/'+array11.id+array22.id+'.pdf')
 
 
 
@@ -518,17 +549,15 @@ const CertifactionStudents = async (req, res) => {
 
 
 
-
-
-
-
 module.exports = {
     getCourses,
     getCourse,
     getScore,
+    DownloadFiles,
     createCourse,
     createCourseAndAssignToFormer,
     countCoursesByFormer,
+    getCertifcateByCoursesAndUser,
     getCoursesByFormer,
     getNbrApprenantByFormation,
     deleteCourse,

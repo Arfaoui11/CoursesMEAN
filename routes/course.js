@@ -1,5 +1,6 @@
 const express = require('express')
-const fs = require('fs')
+const fs = require('fs');
+const http = require('http');
 const {
     getCourses,
     getCourse,
@@ -10,7 +11,9 @@ const {
     getNbrApprenantByFormation,
     getCoursesByFormer,
     updateCourse,
+    getCertifcateByCoursesAndUser,
     upload,
+    DownloadFiles,
     getApprenantByFormation,
     getFormationByApprenant,
     updatreCourseAndAssignToFormer,
@@ -41,11 +44,14 @@ router.get('/courses/count/:id/:dateD/:dateF',countCoursesByFormer)
 
 router.post('/courses/',createCourse)
 
+router.post('/downloadFile',DownloadFiles)
 
 
 //assign apprenant to course
 
 router.post('/courses/:idF/:idA', assignApprenantToCourse)
+
+router.get('/courses/:idC/:idU', getCertifcateByCoursesAndUser)
 
 
 router.get('/video/:url', function(req, res) {

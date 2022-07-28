@@ -11,11 +11,10 @@ const QuizRoutes = require('./routes/quiz')
 const RatingRoutes = require('./routes/rating')
 const cookieParser = require('cookie-parser')
 
+
+
 const morgan = require('morgan')
 const nodemailer = require('nodemailer');
-
-
-
 
 
 
@@ -98,6 +97,7 @@ app.use(morgan('tiny'));
 //app.options('*',cors());
 
 app.use('/public/uploads',express.static(__dirname +'/public/uploads'))
+
 
 
 // use of body parser
