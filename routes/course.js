@@ -46,6 +46,28 @@ router.post('/courses/',createCourse)
 
 router.post('/downloadFile',DownloadFiles)
 
+router.post('/orgs', function(req, res) {
+
+    // Creates a new User based on the Mongoose schema and the post body
+    const newOrg = req.body;
+    let filesPaths = [];
+    // New User is saved in the db.
+
+
+
+    if (newOrg.length >= 1)
+    {
+        newOrg.map( f => {
+            filesPaths.push(f)
+        })
+        console.log(filesPaths);
+        res.json(filesPaths);
+    }else
+    {
+        return res.status(400).json({error: 'No such Files'})
+    }
+});
+
 
 //assign apprenant to course
 
