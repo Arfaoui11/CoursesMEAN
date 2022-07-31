@@ -1,6 +1,9 @@
 const Formation = require('../models/course')
 const User = require('../models/user')
 const Certificate = require('../models/certificate')
+const Order = require('../models/order')
+const OrderDetail = require('../models/order-detail')
+
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
@@ -545,6 +548,83 @@ const CertifactionStudents = async (req, res) => {
 
 
 
+const CheckOutCourses = async (req, res) => {
+    const { id} = req.params;
+
+    const newOrder = req.body;
+
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({error: 'No such User'})
+    }
+
+    try {
+
+
+        const user = await User.findById(id);
+
+        if(!user) {
+            return res.status(400).json({error: 'No such User'})
+        }
+        let totalCost = 0 ;
+
+        if (newOrder.length >= 1)
+        {
+            newOrder.map( f => {
+            totalCost += f.costs;
+            })
+
+        }
+
+        const order = await Order({user:user.id,total:totalCost})
+        await order.save();
+
+        user.orders.push(order);
+        await user.save();
+
+        console.log(newOrder.length)
+        if (newOrder.length >= 1)
+        {
+
+            for (const f of newOrder){
+
+                const course = await Formation.findById(f.id);
+
+                const detail = await OrderDetail({course : course.id,order : order.id});
+                await detail.save();
+
+                course.orderDetails.push(detail);
+                order.orderDetails.push(detail);
+                await course.save();
+                await order.save();
+
+                console.log(" Congratulations  : " + user.lastName + " " + user.firstName + " you have added new  Courses  "+course.title);
+                await  mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + user.lastName + " " + user.firstName + " you have added new  Courses Title : "+course.title,course.title, course.image);
+
+               // await sleep(1000);
+            }
+
+
+
+        }
+        res.status(200).json(newOrder);
+
+    }catch (e) {
+
+        console.log( "error message :" +e.message)
+
+    }
+
+
+}
+
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+
 
 
 
@@ -562,6 +642,7 @@ module.exports = {
     getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,
+    CheckOutCourses,
     getFormationByApprenant,
     getApprenantByFormation,
     updatreCourseAndAssignToFormer,

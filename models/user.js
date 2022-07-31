@@ -86,6 +86,10 @@ const userSchema = new mongoose.Schema({
     Ratings :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rating"
+    }],
+    orders :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Order"
     }]
 
 },{timestamps : true});

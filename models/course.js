@@ -83,6 +83,10 @@ const courseSchema = new mongoose.Schema({
     ratings :[{
         type : mongoose.Schema.Types.ObjectId,
         ref : "Rating"
+    }],
+    orderDetails :[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "OrderDetail"
     }]
 
 },{timestamps : true});

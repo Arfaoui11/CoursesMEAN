@@ -125,9 +125,9 @@ app.use(express.urlencoded({ extended: true}))
 
 
 
-//app.use(authJwt.apply());
+app.use(authJwt.apply());
 
-//app.use(errorHandler)
+app.use(errorHandler)
 
 /*
 // Extended: https://swagger.io/specification/#infoObject
