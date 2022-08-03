@@ -229,11 +229,11 @@ const deleteComment = async (req, res) => {
         return res.status(400).json({error: 'No such Comment'})
     }
 
-    const comment = await Comment.findByIdAndDelete(id);
+    const comment = await Comment.findOneAndDelete({_id: id})
 
     const user = await User.findByIdAndUpdate({_id: comment.user},{ $pull: { comments: comment._id } })
 
-    const course = await Course.findByIdAndUpdate({_id: comment.course},{ $pull: { quizzes: comment._id } })
+    const course = await Course.findByIdAndUpdate({_id: comment.course},{ $pull: { comments: comment._id } })
 
 
     if(!comment) {
@@ -276,7 +276,7 @@ const LeanerStatus = async (req, res) => {
 
             for (const array11 of useres)  {
 
-                const user = await User.findById(array11.id);
+                const user = await User.findById(array11.id).populate('comments');
 
 
                 const NbrCommentsBadByUser = await Comment.countDocuments({'user':user.id,"message":{ $regex: /forbidden words/, $options: 'i' } });
@@ -310,12 +310,12 @@ const LeanerStatus = async (req, res) => {
                     for (let o of user.comments)
                     {
 
-                        const comment = await Comment.findByIdAndDelete(o);
-
+                        const comment = await Comment.findOneAndDelete({_id: o})
                         const user = await User.findByIdAndUpdate({_id: comment.user},{ $pull: { comments: comment._id } })
 
-                        const course = await Course.findByIdAndUpdate({_id: comment.course},{ $pull: { quizzes: comment._id } })
+                        const course = await Course.findByIdAndUpdate({_id: comment.course},{ $pull: { comments: comment._id } })
 
+                        // await deleteComment({params :o.id})
                     }
                     //   console.log(userWithBadWord)
                     mailers.mail("mahdijr2015@gmail.com", " You Are create Comment with bad word in this Courses we excluded in this Courses Mr's  "+array11.firstName +" " + array11.lastName +" this web site is for association of women empowerment not to write this type of comment !!! ", "Udacity Academy - You Are create bad Comment in this Courses ", array11.file)
