@@ -30,7 +30,7 @@ const Services =   {
          if (err) {
              console.error("err ", err);
          } else {
-             res.status(200).json({ message: "Email sent" });
+             console.error("message ", "Email sent");
          }
      });
  }
