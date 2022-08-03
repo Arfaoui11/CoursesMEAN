@@ -8,7 +8,15 @@ const Dislikes = require('../models/dislikes')
 const mongoose = require('mongoose')
 
 //login
+const Filter = require("bad-words");
 
+// Make a new filter
+const filter = new Filter();
+
+// https://www.cs.cmu.edu/~biglou/resources/
+// Add extra words to the bad words list
+const words = require("../bad-words.json");
+filter.addWords(...words);
 
 
 
@@ -156,7 +164,7 @@ const assignApprenantToComment = async (req, res) => {
         }
 
 
-        const comment = await Comment({course:formation._id,user:user._id ,message : message})
+        const comment = await Comment({course:formation._id,user:user._id ,message : filter.clean(message)})
         await comment.save();
 
 
