@@ -371,24 +371,30 @@ cron.schedule('* */2 * * *',  async function() {
                    {
                        let period20J = new Date(comment.createdAt.getTime() + (1000 * 60 * 60 * 48));
 
-                       const commentt = await Comment.findOneAndDelete({_id: comment.id})
-
-                       const users = await User.findByIdAndUpdate({_id: commentt.user},{ $pull: { comments: commentt._id } })
-
-                       const coursse = await Course.findByIdAndUpdate({_id: commentt.course},{ $pull: { comments: commentt._id } })
 
 
-                       if (period20J > date && test) {
+                       if (period20J < date) {
 
                            const userWithBadWord = await User.findOneAndUpdate({_id: user.id},{
                                state : 'DISCIPLINED'
                            });
+                           const commentt = await Comment.findOneAndDelete({_id: comment.id})
+
+                           const users = await User.findByIdAndUpdate({_id: commentt.user},{ $pull: { comments: commentt._id } })
+
+                           const coursse = await Course.findByIdAndUpdate({_id: commentt.course},{ $pull: { comments: commentt._id } })
 
 
-                           console.log("function executed successful")
+
+
                            //   console.log(userWithBadWord)
-                           mailers.mail("mahdijr2015@gmail.com", " You Are access to write some comment bat don't write another bad comment Mr's  "+array11.firstName +" " + array11.lastName +" this web site is for education and learning not to write this type of comment !!! ", "Udacity Academy - You Are access to write Comment in this Courses ", array11.file)
-                        test = false;
+                          if (test)
+                          {
+                              console.log("function executed successful")
+                              mailers.mail("mahdijr2015@gmail.com", " You Are access to write some comment bat don't write another bad comment Mr's  "+array11.firstName +" " + array11.lastName +" this web site is for education and learning not to write this type of comment !!! ", "Udacity Academy - You Are access to write Comment in this Courses ", array11.file)
+                              test = false;
+                          }
+
                        }
                    }
 
