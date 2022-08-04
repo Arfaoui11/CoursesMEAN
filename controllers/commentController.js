@@ -20,8 +20,9 @@ const words = require("../bad-words.json");
 filter.addWords(...words);
 
 
-cron.schedule('* * * * *', function() {
+cron.schedule('* */1 * * *', function() {
     LeanerStatus().then();
+    //decisionUserPUNISHED().then();
 });
 
 
@@ -168,24 +169,30 @@ const assignApprenantToComment = async (req, res) => {
             res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
         }
 
-
-        const comment = await Comment({course:formation._id,user:user._id ,message : filter.clean(message).replace('****','(forbidden words)')})
-        await comment.save();
-
-
-
-
-        user.comments.push(comment);
-
-        formation.comments.push(comment);
-
-        await user.save();
-        await formation.save();
+        if (user.state === 'DISCIPLINED' || user.state === 'WARNED' || user.state === 'PUNISHED')
+        {
+            const comment = await Comment({course:formation._id,user:user._id ,message : filter.clean(message).replace('****','(forbidden words)')})
+            await comment.save();
 
 
-        // save and redirect...
 
-        res.status(200).json(comment)
+
+            user.comments.push(comment);
+
+            formation.comments.push(comment);
+
+            await user.save();
+            await formation.save();
+
+
+            // save and redirect...
+
+            res.status(200).json(comment)
+        }else
+        {
+            res.status(400).json({ error: 'You Are create bad Comment in this Courses' })
+        }
+
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -263,7 +270,7 @@ const updateComment = async (req, res) => {
 }
 
 
-const LeanerStatus = async (req, res) => {
+const LeanerStatus = async () => {
 
 
     try {
@@ -272,7 +279,7 @@ const LeanerStatus = async (req, res) => {
         const useres = await User.find({'type': 'STUDENT'})
 
 
-
+        let test = true;
 
             for (const array11 of useres)  {
 
@@ -283,7 +290,7 @@ const LeanerStatus = async (req, res) => {
 
                 console.log(NbrCommentsBadByUser)
 
-                if (NbrCommentsBadByUser === 1) {
+                if (NbrCommentsBadByUser >= 1 && NbrCommentsBadByUser <= 6 && user.state !== 'WARNED') {
 
                     const userWithBadWord = await User.findOneAndUpdate({_id: user.id},{
                         state : 'WARNED'
@@ -291,7 +298,7 @@ const LeanerStatus = async (req, res) => {
                  //   console.log(userWithBadWord)
                     mailers.mail("mahdijr2015@gmail.com", " You Are create bad Comment in this Courses next comment with bad word we punished 20 day please Mr's  "+array11.firstName +" " + array11.lastName +" this web site is for association of women empowerment not to write this type of comment !!! ", "Udacity Academy - You Are create bad Comment in this Courses ", array11.file)
 
-                }else if (NbrCommentsBadByUser === 5){
+                }else if (NbrCommentsBadByUser >= 7 && user.state !== 'PUNISHED'){
 
                     const userWithBadWord = await User.findOneAndUpdate({_id: user.id},{
                         state : 'PUNISHED'
@@ -301,7 +308,7 @@ const LeanerStatus = async (req, res) => {
 
 
 
-                }else if (NbrCommentsBadByUser > 6)
+                }else if (NbrCommentsBadByUser > 8 && user.state !== 'EXCLUDED')
                 {
                     const userWithBadWord = await User.findOneAndUpdate({_id: user.id},{
                         state : 'EXCLUDED'
@@ -310,7 +317,7 @@ const LeanerStatus = async (req, res) => {
                     for (let o of user.comments)
                     {
 
-                        const comment = await Comment.findOneAndDelete({_id: o})
+                        const comment = await Comment.findOneAndDelete({_id: o,"message":{ $regex: /forbidden words/, $options: 'i' }})
                         const user = await User.findByIdAndUpdate({_id: comment.user},{ $pull: { comments: comment._id } })
 
                         const course = await Course.findByIdAndUpdate({_id: comment.course},{ $pull: { comments: comment._id } })
@@ -318,8 +325,12 @@ const LeanerStatus = async (req, res) => {
                         // await deleteComment({params :o.id})
                     }
                     //   console.log(userWithBadWord)
-                    mailers.mail("mahdijr2015@gmail.com", " You Are create Comment with bad word in this Courses we excluded in this Courses Mr's  "+array11.firstName +" " + array11.lastName +" this web site is for association of women empowerment not to write this type of comment !!! ", "Udacity Academy - You Are create bad Comment in this Courses ", array11.file)
-                }
+                   if (test)
+                   {
+                       mailers.mail("mahdijr2015@gmail.com", " You Are create Comment with bad word in this Courses we excluded in this Courses Mr's  "+array11.firstName +" " + array11.lastName +" this web site is for association of women empowerment not to write this type of comment !!! ", "Udacity Academy - You Are create bad Comment in this Courses ", array11.file)
+                        test=false;
+                   }
+                        }
             }
 
 
@@ -331,6 +342,68 @@ const LeanerStatus = async (req, res) => {
 
 
 }
+
+cron.schedule('* */2 * * *',  async function() {
+    //decisionUserPUNISHED
+
+    try {
+
+
+        const useres = await User.find({'type': 'STUDENT'})
+
+        let date = new Date();
+        let test = true;
+
+        for (const array11 of useres) {
+
+            const user = await User.findById(array11.id).populate('comments');
+
+            if (user.state === 'PUNISHED') {
+
+                for (let p of user.comments) {
+
+
+
+                    const comment = await Comment.findOne({_id:p,"message":{ $regex: /forbidden words/, $options: 'i' }}).sort({createdAt: 1});
+
+
+                   if (comment )
+                   {
+                       let period20J = new Date(comment.createdAt.getTime() + (1000 * 60 * 60 * 48));
+
+                       const commentt = await Comment.findOneAndDelete({_id: comment.id})
+
+                       const users = await User.findByIdAndUpdate({_id: commentt.user},{ $pull: { comments: commentt._id } })
+
+                       const coursse = await Course.findByIdAndUpdate({_id: commentt.course},{ $pull: { comments: commentt._id } })
+
+
+                       if (period20J > date && test) {
+
+                           const userWithBadWord = await User.findOneAndUpdate({_id: user.id},{
+                               state : 'DISCIPLINED'
+                           });
+
+
+                           console.log("function executed successful")
+                           //   console.log(userWithBadWord)
+                           mailers.mail("mahdijr2015@gmail.com", " You Are access to write some comment bat don't write another bad comment Mr's  "+array11.firstName +" " + array11.lastName +" this web site is for education and learning not to write this type of comment !!! ", "Udacity Academy - You Are access to write Comment in this Courses ", array11.file)
+                        test = false;
+                       }
+                   }
+
+                }
+
+
+            }
+        }
+    }catch (e) {
+
+        console.log(e.message)
+
+    }
+});
+
 
 
 
