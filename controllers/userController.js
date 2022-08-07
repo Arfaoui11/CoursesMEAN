@@ -229,6 +229,22 @@ const deleteUser = async (req, res) => {
     res.status(200).json(Formateur)
 }
 
+
+const searchUser = async (req, res) => {
+    const {firstName,lastName,email,phoneNumber, domain,profession,type} = req.body;
+
+
+    const users = await User.find({$or:[{firstName:{ $regex: firstName, $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{domain : { $regex: domain, $options: 'i' }},{email : { $regex: email, $options: 'i' }},{phoneNumber:{ $regex: phoneNumber, $options: 'i' }},{profession : { $regex: profession, $options: 'i' }},{type : { $regex: type, $options: 'i' }}]});
+
+
+
+    if (!users) {
+        return res.status(404).json({error: 'No such users with this search'})
+    }
+
+    res.status(200).json(users)
+}
+
 // update a formation
 const updateUser = async (req, res) => {
     const { id } = req.params
@@ -330,6 +346,7 @@ module.exports = {
     getUsers,
     getFormer,
     getUser,
+    searchUser,
     createUser,
     deleteUser,
     desaffectionApp,

@@ -270,7 +270,8 @@ const updateComment = async (req, res) => {
 }
 
 
-const LeanerStatus = async () => {
+//const LeanerStatus = async () => {
+cron.schedule('* */2 * * *',  async function() {
 
 
     try {
@@ -288,7 +289,7 @@ const LeanerStatus = async () => {
 
                 const NbrCommentsBadByUser = await Comment.countDocuments({'user':user.id,"message":{ $regex: /forbidden words/, $options: 'i' } });
 
-                console.log(NbrCommentsBadByUser)
+
 
                 if (NbrCommentsBadByUser >= 1 && NbrCommentsBadByUser <= 6 && user.state !== 'WARNED') {
 
@@ -341,7 +342,7 @@ const LeanerStatus = async () => {
     }
 
 
-}
+});
 
 cron.schedule('* */2 * * *',  async function() {
     //decisionUserPUNISHED

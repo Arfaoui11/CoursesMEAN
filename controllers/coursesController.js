@@ -70,6 +70,37 @@ const getCourse = async (req, res) => {
     res.status(200).json(course)
 }
 
+
+const searchCourses = async (req, res) => {
+    const {title, domain,level,costs} = req.body;
+
+
+    const course = await Formation.find({$or:[{costs:{ $regex: costs, $options: 'i' }},{level:{ $regex: level, $options: 'i' }},{domain : { $regex: domain, $options: 'i' }},{title : { $regex: title, $options: 'i' }}]});
+
+    console.log(course);
+
+    if (!course) {
+        return res.status(404).json({error: 'No such Course in this search'})
+    }
+
+    res.status(200).json(course)
+}
+
+const search = async (req, res) => {
+    const {key} = req.body;
+
+
+    const course = await Formation.find({$or:[{level:{ $regex: key, $options: 'i' }},{domain : { $regex: key, $options: 'i' }},{title : { $regex: key, $options: 'i' }}]});
+
+
+
+    if (!course) {
+        return res.status(404).json({error: 'No such Course in this search'})
+    }
+
+    res.status(200).json(course)
+}
+
 const getFormationByApprenant = async (req, res) => {
     const {idA} = req.params;
 
@@ -618,11 +649,6 @@ const CheckOutCourses = async (req, res) => {
 
 }
 
-function sleep(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
 
 
 
@@ -642,6 +668,8 @@ module.exports = {
     getNbrApprenantByFormation,
     deleteCourse,
     updateCourse,
+    searchCourses,
+    search,
     CheckOutCourses,
     getFormationByApprenant,
     getApprenantByFormation,

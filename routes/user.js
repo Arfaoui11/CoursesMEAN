@@ -7,6 +7,7 @@ const {
     createUser,
     deleteUser,
     updateUser,
+    searchUser,
     desaffectionApp,
     upload,
 } = require('../controllers/userController')
@@ -24,6 +25,8 @@ router.get('/user/getFormer', getFormer)
 
 // GET a single formation
 router.get('/user/:id', getUser)
+
+router.post('/user/search', searchUser);
 
 // POST a new formation
 router.post('/user/register',upload.single('file') , createUser)

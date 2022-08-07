@@ -13,6 +13,8 @@ const {
     updateCourse,
     getCertifcateByCoursesAndUser,
     upload,
+    searchCourses,
+    search,
     CheckOutCourses,
     DownloadFiles,
     getApprenantByFormation,
@@ -33,6 +35,11 @@ router.get('/courses/',getCoursesByFormer);
 
 router.get('/courses/:id', getCourse);
 
+
+router.post('/courses/search', searchCourses);
+
+router.post('/courses/searchSingleKey', search);
+
 router.get('/courses/getMycourses/:idA', getFormationByApprenant);
 
 router.get('/courses/getStudent/:idC', getApprenantByFormation);
@@ -48,6 +55,8 @@ router.post('/courses/',createCourse)
 router.post('/downloadFile',DownloadFiles)
 
 router.post('/checkout/:id',CheckOutCourses)
+
+
 
 
 
