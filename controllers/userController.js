@@ -231,10 +231,10 @@ const deleteUser = async (req, res) => {
 
 
 const searchUser = async (req, res) => {
-    const {firstName,lastName,email,phoneNumber, domain,profession,type} = req.body;
+    const {firstName,lastName,email,phoneNumber,profession,type} = req.body;
 
 
-    const users = await User.find({$or:[{firstName:{ $regex: firstName, $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{domain : { $regex: domain, $options: 'i' }},{email : { $regex: email, $options: 'i' }},{phoneNumber:{ $regex: phoneNumber, $options: 'i' }},{profession : { $regex: profession, $options: 'i' }},{type : { $regex: type, $options: 'i' }}]});
+    const users = await User.find({$or:[{firstName:{ $regex: firstName+ "" , $options: 'i' }},{lastName:{ $regex: lastName+ "", $options: 'i' }},{email : { $regex: email+ "", $options: 'i' }},{phoneNumber:{ $regex: phoneNumber+ "", $options: 'i' }},{profession : { $regex: profession+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
 
 
 
@@ -247,7 +247,7 @@ const searchUser = async (req, res) => {
 
 // update a formation
 const updateUser = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({error: 'No such User'})

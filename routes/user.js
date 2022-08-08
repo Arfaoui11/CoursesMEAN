@@ -19,7 +19,7 @@ const router = express.Router()
 router.post('/user/login',loginRequest)
 
 // GET all formations
-router.get('/user/', getUsers)
+router.get('/user', getUsers)
 
 router.get('/user/getFormer', getFormer)
 

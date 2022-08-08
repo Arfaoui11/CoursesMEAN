@@ -72,10 +72,10 @@ const getCourse = async (req, res) => {
 
 
 const searchCourses = async (req, res) => {
-    const {title, domain,level,costs} = req.body;
+    const {title, domain,level} = req.body;
 
 
-    const course = await Formation.find({$or:[{costs:{ $regex: costs, $options: 'i' }},{level:{ $regex: level, $options: 'i' }},{domain : { $regex: domain, $options: 'i' }},{title : { $regex: title, $options: 'i' }}]});
+    const course = await Formation.find({$or:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]});
 
     console.log(course);
 
