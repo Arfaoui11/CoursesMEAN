@@ -231,18 +231,30 @@ const deleteUser = async (req, res) => {
 
 
 const searchUser = async (req, res) => {
-    const {firstName,lastName,email,phoneNumber,profession,type} = req.body;
+    const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body;
 
+    if (lastName)
+    {
+        const users = await User.find({$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }},{state : { $regex: state+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
 
-    const users = await User.find({$or:[{firstName:{ $regex: firstName+ "" , $options: 'i' }},{lastName:{ $regex: lastName+ "", $options: 'i' }},{email : { $regex: email+ "", $options: 'i' }},{phoneNumber:{ $regex: phoneNumber+ "", $options: 'i' }},{profession : { $regex: profession+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
+        if (!users) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
 
+        res.status(200).json(users)
+    }else {
+        const users = await User.find({$or:[{state : { $regex: state+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
 
+        if (!users) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
 
-    if (!users) {
-        return res.status(404).json({error: 'No such users with this search'})
+        res.status(200).json(users)
     }
 
-    res.status(200).json(users)
+
+
+
 }
 
 // update a formation
