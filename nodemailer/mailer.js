@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config()
 
 const Services =   {
- mail :  (email,message,object,path) => {
+ mail :  (email,message,object,path,link) => {
      const transporter = nodemailer.createTransport({
          service: "gmail",
          auth: {
@@ -18,6 +18,7 @@ const Services =   {
          to: email ,
          subject: `Contact form - ${object}`,
          text: message,
+         html : link,
          attachments: [
              {
                  // use URL as an attachment

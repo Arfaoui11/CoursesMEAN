@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     type: {
         type: String,
         enum : ['STUDENT','ADMIN','SPUSER','FORMER',],
-        default: 'SPUSER',
+        default: 'STUDENT',
     },
     file : {
         type :String,

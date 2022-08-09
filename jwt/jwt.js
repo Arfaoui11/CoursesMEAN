@@ -11,7 +11,7 @@ function authJwt() {
         path : [
             {url : /\/api\/courses(.*)/ , methods : ['GET','OPTIONS'] },
             {url : /\/api\/user(.*)/ , methods : ['POST','OPTIONS'] },
-
+            {url : /\/api\/user\/activate(.*)/ , methods : ['POST','OPTIONS'] },
             {url : /\/api\/video(.*)/ , methods : ['GET','OPTIONS'] },
             {url : /\/api\/user(.*)/ , methods : ['POST','OPTIONS'] },
             {url : /\/api\/comment(.*)/ , methods : ['GET','POST','OPTIONS'] },

@@ -3,7 +3,7 @@ const Course = require('../models/course')
 const CourseApprenant = require('../models/courseApprenant')
 const Result = require('../models/result')
 const Quiz = require('../models/quiz')
-const DeleteResults =   require('../controllers/quizController')
+const mailers = require('../nodemailer/mailer')
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
@@ -119,8 +119,9 @@ const logout = async (req,res) => {
 const loginRequest = async (req,res) => {
 
 
-    const secret = process.env.JWT_SECRET
-    const user = await  User.findOne({email: req.body.email})
+    const secret = process.env.JWT_SECRET;
+    const user = await  User.findOne({email: req.body.email});
+
 
     if (!user)
     {
@@ -139,12 +140,17 @@ const loginRequest = async (req,res) => {
             {
                 expiresIn: '1d'
             }
-        )
+        );
 
-        res.status(200).json({user : user , token : token})
+        if (user.verified === false)
+        {
+            return res.status(404).json({error: 'please verify your account '})
+        }
+
+        res.status(200).json({user : user , token : token});
     }else
     {
-        res.status(200).json('Password Wrong !!!!')
+        res.status(404).json('Password Wrong !!!!')
     }
 
 
@@ -188,27 +194,80 @@ const getUser = async (req, res) => {
 const createUser = async (req, res) => {
 
     const file = req.file;
-    if (!file) return res.status(400).send('No image in the request')
+    if (!file) return res.status(400).send('No image in the request');
 
     const fileName = req.file.filename;
     const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
-    const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body;
+    const {firstName,lastName, profession,email, type,state,salary,password,isAdmin,tarifHoraire,age,phoneNumber} = req.body;
 
 
 
 
     // add to the database
     try {
-        let user = await User.create({firstName,lastName, email,isAdmin,file : `${basePath}${fileName}` ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} )
-        res.status(200).json(user)
+
+
+        User.findOne({email}).exec(async (err,users) => {
+
+            if (users) {
+                return res.status(400).json({error : " User with this email already exists. "})
+            }
+
+            let user = await User.create({firstName,lastName, email,isAdmin,file : `${basePath}${fileName}` ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} );
+
+
+            const token = jwt.sign({lastName,email,password },process.env.JWT_ACC_ACTIVAT,{expiresIn:'20m'});
+
+
+
+
+
+
+            mailers.mail(email,'Account Activation Link',
+                "Please click on give link to activate your account ",user.file,`<h2>Please click on give link to activate your account </h2>
+                        <p>http://localhost:4200/verification/${token}</p>`);
+            res.status(200).json(user)
+
+
+
+        })
+
+
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
 }
 
 
+const activatedAccount = async (req,res) => {
+    const {token} = req.body;
+    if (token) {
+        jwt.verify(token,process.env.JWT_ACC_ACTIVAT,function (err,decodedToken) {
+            if (err)
+            {
+                return res.status(400).json({error: 'Incorrect orExpired link'});
+            }
+            const {lastName, email,password} = decodedToken;
 
+            User.findOne({email}).exec(async (err,user) => {
+                if(err)
+                {
+                    return res.status(400).json({error: 'Incorrect User'});
+                }
+                const userVerif = await User.findOneAndUpdate({_id: user.id}, {
+                    verified:true
+                });
+
+                res.status(200).json(userVerif);
+            })
+
+        })
+    }else
+    {
+        return res.status(400).json({error: 'Something went wrong  !!!!'});
+    }
+}
 
 
 
@@ -249,7 +308,7 @@ const searchUser = async (req, res) => {
             return res.status(404).json({error: 'No such users with this search'})
         }
 
-        res.status(200).json(users)
+        res.status(200).json(users);dddd
     }
 
 
@@ -362,6 +421,7 @@ module.exports = {
     createUser,
     deleteUser,
     desaffectionApp,
+    activatedAccount,
     updateUser,
     upload,
 }

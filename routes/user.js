@@ -9,6 +9,7 @@ const {
     updateUser,
     searchUser,
     desaffectionApp,
+    activatedAccount,
     upload,
 } = require('../controllers/userController')
 
@@ -27,6 +28,11 @@ router.get('/user/getFormer', getFormer)
 router.get('/user/:id', getUser)
 
 router.post('/user/search', searchUser);
+
+
+router.post('/user/activate', activatedAccount);
+
+
 
 // POST a new formation
 router.post('/user/register',upload.single('file') , createUser)
