@@ -10,6 +10,7 @@ const {
     searchUser,
     desaffectionApp,
     activatedAccount,
+    resendEmailActivated,
     upload,
 } = require('../controllers/userController')
 
@@ -31,6 +32,11 @@ router.post('/user/search', searchUser);
 
 
 router.post('/user/activate', activatedAccount);
+
+
+router.post('/user/resendToken', resendEmailActivated);
+
+
 
 
 

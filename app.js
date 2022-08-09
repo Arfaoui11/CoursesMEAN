@@ -51,18 +51,18 @@ io.on('connection', (socket) => {
     let userName = socket.handshake.query.userName;
     addUser(userName, socket.id);
 
-    let user  = userName.split(',');
+    //let user  = userName.split(',');
 
     socket.broadcast.emit('user-list', [...userList.keys()]);
     socket.emit('user-list', [...userList.keys()]);
 
     socket.on('message', (msg) => {
-        socket.broadcast.emit('message-broadcast', {message: msg, userName: user.toString()});
+        socket.broadcast.emit('message-broadcast', {message: msg, userName: userName});
     })
 
     socket.on('disconnect', (reason) => {
         console.log('user logout')
-        removeUser(user[0], socket.id);
+        removeUser(userName, socket.id);
     })
 });
 

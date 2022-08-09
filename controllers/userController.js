@@ -225,7 +225,7 @@ const createUser = async (req, res) => {
 
 
             mailers.mail(email,'Account Activation Link',
-                "Please click on give link to activate your account ",user.file,`<h2>Please click on give link to activate your account </h2>
+                "Udacity Academy Website",user.file,`<h2>Please click on give link to activate your account </h2>
                         <p>http://localhost:4200/verification/${token}</p>`);
             res.status(200).json(user)
 
@@ -237,6 +237,33 @@ const createUser = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
+}
+
+
+const resendEmailActivated = async (req,res) => {
+    const {email} = req.body;
+
+    try {
+
+        User.findOne({email}).exec(async (err,user) => {
+            if(err)
+            {
+                return res.status(400).json({error: 'Incorrect User'});
+            }
+            console.log(user);
+            const token = jwt.sign({email},process.env.JWT_ACC_ACTIVAT,{expiresIn:'20m'});
+            mailers.mail(email,'Account Activation Link',
+                "Udacity Academy Website",user.file,`<h2>Please click on give link to activate your account </h2>
+                        <p>http://localhost:4200/verification/${token}</p>`);
+            res.status(200).json(user)
+
+
+        });
+
+    }catch (e) {
+        res.status(400).json({ error: e.message })
+    }
+
 }
 
 
@@ -260,7 +287,7 @@ const activatedAccount = async (req,res) => {
                 });
 
                 res.status(200).json(userVerif);
-            })
+            });
 
         })
     }else
@@ -422,6 +449,7 @@ module.exports = {
     deleteUser,
     desaffectionApp,
     activatedAccount,
+    resendEmailActivated,
     updateUser,
     upload,
 }
