@@ -72,18 +72,29 @@ const getCourse = async (req, res) => {
 
 
 const searchCourses = async (req, res) => {
-    const {title, domain,level} = req.body;
+    const {title, domain,level,order} = req.body;
 
 
-    const course = await Formation.find({$or:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]});
+    if (title)
+    {
+        const course = await Formation.find({$and:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
 
-    console.log(course);
+        if (!course) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
 
-    if (!course) {
-        return res.status(404).json({error: 'No such Course in this search'})
+        res.status(200).json(course)
+    }else {
+        const course = await Formation.find({$or:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }}]}).sort({costs : order});
+
+        if (!course) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
+
+        res.status(200).json(course);
     }
 
-    res.status(200).json(course)
+
 }
 
 const search = async (req, res) => {
