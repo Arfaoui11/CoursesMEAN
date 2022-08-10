@@ -9,6 +9,7 @@ const {
     updateUser,
     searchUser,
     desaffectionApp,
+    createAccountAdmin,
     activatedAccount,
     resendEmailActivated,
     upload,
@@ -39,6 +40,8 @@ router.post('/user/resendToken', resendEmailActivated);
 
 
 
+router.get('/',createAccountAdmin);
+
 
 // POST a new formation
 router.post('/user/register',upload.single('file') , createUser)
@@ -51,4 +54,4 @@ router.delete('/user/desaffection/:idA/:idF', desaffectionApp)
 // UPDATE a formation
 router.patch('/user/:id', updateUser)
 
-module.exports = router
+module.exports = router;

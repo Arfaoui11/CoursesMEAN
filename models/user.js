@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
     },
     profession: {
         type: String,
-        enum : ['IT', 'ART', 'CINEMA', 'MUSIC', 'DANCE', 'PHY', 'ECONOMIC', 'MARKETING'],
-        default: 'IT',
+        enum : ['DEVELOPMENT', 'BUSINESS', 'FINANCE&ACCOUNTING', 'IT&SOFTWARE', 'OFFICEPRODUCTIVITY', 'PERSONALDEVELOPMENT', 'DESIGN', 'MARKETING','LIFESTYLE','PHOTOGRAPHY&VIDEO','HEALTH&FITNESS','MUSIC','TEACHING&ACADEMICS'],
+        default: 'DEVELOPMENT',
     },
     type: {
         type: String,

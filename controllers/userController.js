@@ -4,9 +4,10 @@ const CourseApprenant = require('../models/courseApprenant')
 const Result = require('../models/result')
 const Quiz = require('../models/quiz')
 const mailers = require('../nodemailer/mailer')
-
+const cron = require('node-cron');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
+
 
 const multer = require('multer')
 
@@ -239,8 +240,100 @@ const createUser = async (req, res) => {
     }
 }
 
+cron.schedule('1-1 * * * * *',  async function() {
 
-const resendEmailActivated = async (req,res) => {
+    const fileName = `user_shield_64px.png`;
+    const basePath = `http://localhost:4000/public/uploads/`;
+
+    const email = "admin@gmail.com";
+    const firstName = "Admin";
+    const lastName = "Admin";
+    const isAdmin = true;
+    const verified = true;
+    const type = "ADMIN";
+    const password = "allAccessWithAdmin2023";
+    const phoneNumber = "+21670258369";
+
+
+    try {
+
+        User.findOne({email}).exec(async (err,users) => {
+
+            if (users) {
+                console.log(" User with this email already exists. ");
+            }else
+            {
+                let user = await User.create({firstName,lastName, email,isAdmin,verified ,file : `${basePath}${fileName}` , type, password : bcrypt.hashSync(password,10),phoneNumber} );
+
+
+
+                mailers.mail(email,'Account Admin Created With Success',
+                    "Udacity Academy Website",user.file);
+
+                console.log("Account Create With Success");
+            }
+
+        })
+
+
+    }catch (error) {
+        console.log(error.message);
+
+    }
+
+
+});
+
+
+const createAccountAdmin = async () => {
+
+    const fileName = `user_shield_64px.png`;
+    const basePath = `http://localhost:4000/public/uploads/`;
+
+    const email = "mahdi.arfaoui1@gmail.com";
+    const firstName = "Admin";
+    const lastName = "Admin";
+    const isAdmin = true;
+    const verified = true;
+    const type = "ADMIN";
+    const password = "allAccessWithAdmin2023";
+    const phoneNumber = "+21670258369";
+
+
+    try {
+
+        User.findOne({email}).exec(async (err,users) => {
+
+            if (users) {
+                console.log(" User with this email already exists. ");
+            }else
+            {
+                let user = await User.create({firstName,lastName, email,isAdmin,verified ,file : `${basePath}${fileName}` , type, password : bcrypt.hashSync(password,10),phoneNumber} );
+
+
+
+                mailers.mail(email,'Account Admin Created With Success',
+                    "Udacity Academy Website",user.file);
+
+                console.log("Account Create With Success");
+            }
+
+        })
+
+
+    }catch (error) {
+        console.log(error.message);
+
+    }
+
+
+};
+
+
+
+
+    const resendEmailActivated = async (req,res) => {
+
     const {email} = req.body;
 
     try {
@@ -447,6 +540,7 @@ module.exports = {
     searchUser,
     createUser,
     deleteUser,
+    createAccountAdmin,
     desaffectionApp,
     activatedAccount,
     resendEmailActivated,

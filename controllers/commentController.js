@@ -153,13 +153,13 @@ const assignApprenantToComment = async (req, res) => {
     // find out which post you are commenting
     const {idF,idU} = req.params;
 
-    const {message} = req.body
+    const {message} = req.body;
 
 
     // get the comment text and record post id
     try {
-        const user = await User.findById(idU)
-        const formation = await Course.findById(idF)
+        const user = await User.findById(idU);
+        const formation = await Course.findById(idF);
 
 
 
