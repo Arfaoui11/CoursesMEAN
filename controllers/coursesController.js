@@ -74,22 +74,59 @@ const getCourse = async (req, res) => {
 const searchCourses = async (req, res) => {
     const {title, domain,level,order} = req.body;
 
+    console.log(title + " "+domain + " "+level);
 
-    if (title)
-    {
-        const course = await Formation.find({$and:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
+
+    if( level === 'All' && domain === 'All'){
+        const course = await Formation.find({title : { $regex: title+ "" , $options: 'i' }}).sort({costs : order});
+
+        if (!course) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
+
+
+
+        res.status(200).json(course);
+    }
+    else if (level === 'All') {
+
+        const course = await Formation.find({$and:[{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
 
         if (!course) {
             return res.status(404).json({error: 'No such users with this search'})
         }
 
         res.status(200).json(course)
-    }else {
-        const course = await Formation.find({$or:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }}]}).sort({costs : order});
+    }else if (domain === 'All') {
+
+        const course = await Formation.find({$and:[{level : { $regex: level + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
 
         if (!course) {
             return res.status(404).json({error: 'No such users with this search'})
         }
+
+
+        res.status(200).json(course)
+    } else  if (title) {
+
+        const course = await Formation.find({$and:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title , $options: 'i' }}]}).sort({costs : order});
+
+        if (!course) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
+
+
+
+        res.status(200).json(course);
+
+    }else
+    {
+        const course = await Formation.find({}).sort({costs : order});
+
+        if (!course) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
+
 
         res.status(200).json(course);
     }

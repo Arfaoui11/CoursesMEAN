@@ -49,7 +49,9 @@ io.on('connection', (socket) => {
 
     console.log('chat app connected')
     let userName = socket.handshake.query.userName;
-    addUser(userName, socket.id);
+    let image = socket.handshake.query.image;
+    let user = userName + ',' + image;
+    addUser(user, socket.id);
 
     //let user  = userName.split(',');
 
@@ -57,18 +59,18 @@ io.on('connection', (socket) => {
     socket.emit('user-list', [...userList.keys()]);
 
     socket.on('message', (msg) => {
-        socket.broadcast.emit('message-broadcast', {message: msg, userName: userName});
+        socket.broadcast.emit('message-broadcast', {message: msg , userName: userName,image : image});
     })
 
     socket.on('disconnect', (reason) => {
         console.log('user logout')
-        removeUser(userName, socket.id);
+        removeUser(user, socket.id);
     })
 });
 
 function addUser(userName, id) {
 
-    //let user  = userName.split(',');
+   // let user  = userName.split(',');
 
     if (!userList.has(userName)) {
         userList.set(userName, new Set(id));
@@ -80,7 +82,7 @@ function addUser(userName, id) {
 function removeUser(userName, id) {
     if (userList.has(userName)) {
         let userIds = userList.get(userName);
-        if (userIds.size == 0) {
+        if (userIds.size === 0) {
             userList.delete(userName);
         }
     }

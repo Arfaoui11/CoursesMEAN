@@ -240,7 +240,7 @@ const createUser = async (req, res) => {
     }
 }
 
-cron.schedule('1-1 * * * * *',  async function() {
+/*cron.schedule('1-1 * * * * *',  async function() {
 
     const fileName = `user_shield_64px.png`;
     const basePath = `http://localhost:4000/public/uploads/`;
@@ -282,7 +282,7 @@ cron.schedule('1-1 * * * * *',  async function() {
     }
 
 
-});
+});*/
 
 
 const createAccountAdmin = async () => {
@@ -412,7 +412,17 @@ const deleteUser = async (req, res) => {
 const searchUser = async (req, res) => {
     const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body;
 
-    if (lastName)
+    if (type === 'All' && state === 'All')
+    {
+        const users = await User.find({$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }},{state : { $regex: state+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
+
+        if (!users) {
+            return res.status(404).json({error: 'No such users with this search'})
+        }
+
+        res.status(200).json(users)
+    }
+    else if (lastName)
     {
         const users = await User.find({$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }},{state : { $regex: state+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
 
