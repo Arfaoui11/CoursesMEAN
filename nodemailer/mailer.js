@@ -16,7 +16,7 @@ const Services =   {
      const mailOptions = {
          from: process.env.EMAIL_ADDRESS,
          to: email ,
-         subject: `Contact form - ${object}`,
+         subject: ` ${object}`,
          text: message,
          html : link,
          attachments: [

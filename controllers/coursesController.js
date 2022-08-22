@@ -655,13 +655,20 @@ const CheckOutCourses = async (req, res) => {
 
         }
 
-        const order = await Order({user:user.id,total:totalCost})
+
+
+        const order = await Order({user:user.id,total:totalCost}).populate({path:'orderDetails',populate:'order course'});
         await order.save();
+
+
+
+
+
 
         user.orders.push(order);
         await user.save();
 
-        console.log(newOrder.length)
+
         if (newOrder.length >= 1)
         {
 
@@ -678,14 +685,28 @@ const CheckOutCourses = async (req, res) => {
                 await order.save();
 
                 console.log(" Congratulations  : " + user.lastName + " " + user.firstName + " you have added new  Courses  "+course.title);
-                await  mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + user.lastName + " " + user.firstName + " you have added new  Courses Title : "+course.title,course.title, course.image);
+                await  mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + user.lastName + " " + user.firstName + " you have added new  Courses Title : "+course.title + "Price : " + course.costs +" .",course.title, course.image);
 
-               // await sleep(1000);
+
             }
 
 
 
         }
+
+        await  mailers.mail("mahdijr2015@gmail.com", "Your order’s been processed","Thanks for choosing to learn with us — we’re excited to be on your journey with you.\n", './public/uploads/shopping_cart_500px.png',
+            '<table style="border-bottom: 1px solid #ddd;">' +
+            '<thead>' +
+            '<th> Course name </th>' +
+            '<th> Total price </th>' +
+            '</thead>' +
+            '<tr >' +
+            '<td>' + await order.orderDetails.course + '</td>' +
+            '<td>' + order.total + '</td>' +
+            '</tr>' +
+            '</table>');
+
+        console.log(order);
         res.status(200).json(newOrder);
 
     }catch (e) {
