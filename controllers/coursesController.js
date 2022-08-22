@@ -701,7 +701,7 @@ const CheckOutCourses = async (req, res) => {
             '<th> Total price </th>' +
             '</thead>' +
             '<tr >' +
-            '<td>' + await order.orderDetails.course + '</td>' +
+            '<td>' + order.orderDetails.course + '</td>' +
             '<td>' + order.total + '</td>' +
             '</tr>' +
             '</table>');
