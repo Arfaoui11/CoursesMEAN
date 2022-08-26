@@ -29,7 +29,7 @@ const router = express.Router()
 router.get('/courses/', getCourses);
 
 
-router.get('/courses/coursesByCourses/:idF',getCoursesByFormer);
+router.get('/courses/coursesByFormer/:idF',getCoursesByFormer);
 // GET all formations
 
 

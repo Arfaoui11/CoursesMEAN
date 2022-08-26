@@ -161,7 +161,7 @@ const assignApprenantToComment = async (req, res) => {
         const user = await User.findById(idU);
         const formation = await Course.findById(idF);
 
-
+///we
 
 
         if (user.state === 'DISCIPLINED' || user.state === 'WARNED' || user.state === 'PUNISHED')
