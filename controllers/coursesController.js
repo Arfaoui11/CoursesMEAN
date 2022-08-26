@@ -54,13 +54,13 @@ const getCourses = async (req, res) => {
 
 // get a single formation
 const getCourse = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    const course = await Formation.findById(id).populate('userF').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
+    const course = await Formation.findById(id).populate('userF quizzes').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
 
 
     if (!course) {
@@ -213,7 +213,7 @@ const countCoursesByFormer = async (req, res) => {
 
     let nbr = 0;
 
-    const NbrcourseByFormer = await Formation.countDocuments({'userF':id})
+    const NbrcourseByFormer = await Formation.countDocuments({'userF':id});
 
     const course = await Formation.find({$and:[{'userF':id},{'start':{"$gte": dateD}},{'end':{"$lte": dateF}}]}).populate('userF')
 
@@ -252,30 +252,26 @@ const getNbrApprenantByFormation = async (req, res) => {
 }
 
 const getCoursesByFormer = async (req, res) => {
-    let filtre = {};
 
 
-
-    if (req.query.userF) {
-        filtre = {userF : req.query.userF.split(',')}
-    }
+    const { idF } = req.params;
 
 
-    if (!mongoose.Types.ObjectId.isValid(req.query.userF.split(','))) {
-        return res.status(404).json({error: 'No such Found'})
-    }
-
-
-    const course = await Formation.find(filtre)
-
-
-
-
-    if (!course) {
+    if (!mongoose.Types.ObjectId.isValid(idF)) {
         return res.status(404).json({error: 'No such Course'})
     }
 
-    res.status(200).json(course)
+
+    const courses = await Formation.find({'userF':idF});
+
+
+
+
+    if (!courses) {
+        return res.status(404).json({error: 'No such Course'})
+    }
+
+    res.status(200).json(courses)
 }
 
 

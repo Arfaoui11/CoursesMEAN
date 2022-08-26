@@ -79,7 +79,7 @@ const getUsera =async (req,res) => {
     try {
         const secret = process.env.JWT_SECRET
 
-        const cookie = req.cookies['jwt']
+        const cookie = req.cookies['jwt'];
 
         const claims = jwt.verify(cookie,secret)
 

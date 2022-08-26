@@ -134,7 +134,7 @@ const dislikeComments = async (req ,res) => {
 
 // create a new formation
 const createComment = async (req, res) => {
-    const {message} = req.body
+    const {message} = req.body;
 
 
 
@@ -163,11 +163,6 @@ const assignApprenantToComment = async (req, res) => {
 
 
 
-
-        if (user.type.toString() !== "STUDENT")
-        {
-            res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
-        }
 
         if (user.state === 'DISCIPLINED' || user.state === 'WARNED' || user.state === 'PUNISHED')
         {
