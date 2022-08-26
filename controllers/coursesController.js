@@ -419,9 +419,9 @@ const assignApprenantToCourse = async (req, res) => {
 
         // save and redirect...
         //send email to anather mail
-        mailers.mail("mahdijr2015@gmail.com",formation.title,formation.userF.lastName,formation.image)
+        mailers.mail("mahdijr2015@gmail.com","Congratulations Mr's : " + apprenant.lastName + " " + apprenant.firstName + " you have added new Courses", " Former Name : "+formation.userF.lastName,formation.image)
 
-        pdfa(formation,apprenant,'public/certif/Certif.pdf','public/certif/output.pdf');
+       // pdfa(formation,apprenant,'public/certif/Certif.pdf','public/certif/output.pdf');
 
 
         res.status(200).json(courseApp)
