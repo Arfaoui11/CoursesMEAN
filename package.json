@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -12,6 +13,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "latest",
     "cookie-parser": "^1.4.6",
+    "core-js": "^3.25.0",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.0.1",

@@ -47,7 +47,7 @@ const upload = multer({ storage: storage })
 
 
 const getCourses = async (req, res) => {
-    const courses = await Formation.find({}).sort({createdAt: -1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
+    const courses = await Formation.find({}).sort({"ratings": -1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
     //console.log(courses)
     res.status(200).json(courses)
 }
