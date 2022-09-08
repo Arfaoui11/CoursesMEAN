@@ -9,7 +9,7 @@ function authJwt() {
         }).unless({
 
         path : [
-            {url : /\/api\/courses(.*)/ , methods : ['GET','OPTIONS'] },
+            {url : /\/api\/courses(.*)/ , methods : ['GET','POST','OPTIONS'] },
             {url : /\/api\/user(.*)/ , methods : ['POST','OPTIONS'] },
             {url : /\/api\/user\/activate(.*)/ , methods : ['POST','OPTIONS'] },
             {url : /\/api\/video(.*)/ , methods : ['GET','OPTIONS'] },

@@ -72,13 +72,17 @@ const getCourse = async (req, res) => {
 
 
 const searchCourses = async (req, res) => {
-    const {title, domain,level,order} = req.body;
+    const {title, domain,level,order,nbrHours} = req.body;
 
     console.log(title + " "+domain + " "+level);
 
 
-    if( level === 'All' && domain === 'All'){
-        const course = await Formation.find({title : { $regex: title+ "" , $options: 'i' }}).sort({costs : order});
+   let nb = Number(nbrHours);
+
+    console.log(nb);
+
+    if( level === 'All' && domain === 'all'){
+        const course = await Formation.find({title : { $regex: title+ "" , $options: 'i' },nbrHours:{$gte:nb-5,$lte:nb}}).sort({costs : order});
 
         if (!course) {
             return res.status(404).json({error: 'No such users with this search'})
@@ -90,16 +94,16 @@ const searchCourses = async (req, res) => {
     }
     else if (level === 'All') {
 
-        const course = await Formation.find({$and:[{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
+        const course = await Formation.find({$and:[{domain : { $regex: domain + "", $options: 'i' }},{nbrHours:{$gte:nb-5,$lte:nb}},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
 
         if (!course) {
             return res.status(404).json({error: 'No such users with this search'})
         }
 
         res.status(200).json(course)
-    }else if (domain === 'All') {
+    }else if (domain === 'all') {
 
-        const course = await Formation.find({$and:[{level : { $regex: level + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
+        const course = await Formation.find({$and:[{level : { $regex: level + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }},{nbrHours:{$gte:nb-5,$lte:nb}}]}).sort({costs : order});
 
         if (!course) {
             return res.status(404).json({error: 'No such users with this search'})
@@ -109,7 +113,7 @@ const searchCourses = async (req, res) => {
         res.status(200).json(course)
     } else  if (title) {
 
-        const course = await Formation.find({$and:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title , $options: 'i' }}]}).sort({costs : order});
+        const course = await Formation.find({$and:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title , $options: 'i' }},{nbrHours:{$gte:nb-5,$lte:nb}}]}).sort({costs : order});
 
         if (!course) {
             return res.status(404).json({error: 'No such users with this search'})
@@ -305,25 +309,25 @@ const createCourseAndAssignToFormer = async (req, res) => {
 
 
 
-    const {title, domain,level, start,end,nbrHours ,lieu,nbrMaxParticipant,costs} = req.body
+    const {title, domain,level, start,end,nbrHours ,lieu,nbrMaxParticipant,costs,prerequisites,skills} = req.body;
     // get the comment text and record post id
     try {
-        const formateur = await User.findById(id);
+        const former = await User.findById(id);
 
-        if (formateur.type.toString() !== "FORMER")
+        if (former.type.toString() !== "FORMER")
         {
             res.status(404).json({ error: 'Assign to Courses former not Other type' })
         }
-        const course = await Formation({title, domain,level,image : `${basePath}${fileName}` , start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
+        const course = await Formation({title, domain,level,prerequisites,skills,image : `${basePath}${fileName}` , start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
 
         // save comment
         await course.save();
         // get this particular post
 
         // push the comment into the post.comments array
-        formateur.coursesF.push(course);
+        former.coursesF.push(course);
         // save and redirect...
-        await formateur.save()
+        await former.save();
         res.status(200).json(course)
     } catch (error) {
         res.status(400).json({ error: error.message })
