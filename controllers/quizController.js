@@ -255,7 +255,7 @@ const getQuizQuestion = async (req, res) => {
         for (let i=0 ; i<5 ; i++)
         {
 
-            const rand = makeUniqueRandom(question.length)
+            const rand = makeUniqueRandom(question.length);
             console.log(rand);
 
             listQuestions.push(question[rand])
