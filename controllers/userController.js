@@ -410,11 +410,17 @@ const deleteUser = async (req, res) => {
 
 
 const searchUser = async (req, res) => {
-    const {firstName,lastName, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body;
+    const {firstName,lastName,verified, profession,email, type,state,salary,isAdmin,tarifHoraire,age,phoneNumber} = req.body;
+
+
+
+
+
 
     if (type === 'All' && state === 'All')
     {
-        const users = await User.find({$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }},{state : { $regex: state+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
+        console.log("condition 1");
+        const users = await User.find({$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }}]});
 
         if (!users) {
             return res.status(404).json({error: 'No such users with this search'})
@@ -424,7 +430,9 @@ const searchUser = async (req, res) => {
     }
     else if (lastName)
     {
-        const users = await User.find({$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }},{state : { $regex: state+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
+
+        console.log("condition 2");
+        const users = await User.find({$and:[ {$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }}]} ,{state : { $regex: state, $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
 
         if (!users) {
             return res.status(404).json({error: 'No such users with this search'})
@@ -432,13 +440,15 @@ const searchUser = async (req, res) => {
 
         res.status(200).json(users)
     }else {
-        const users = await User.find({$or:[{state : { $regex: state+ "", $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
+
+        console.log("condition 3");
+        const users = await User.find({$and:[{state : { $regex: state, $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }},{verified : verified}]});
 
         if (!users) {
             return res.status(404).json({error: 'No such users with this search'})
         }
 
-        res.status(200).json(users);dddd
+        res.status(200).json(users);
     }
 
 
