@@ -16,6 +16,7 @@ const {
     searchCourses,
     search,
     CheckOutCourses,
+    getCoursesByRating,
     DownloadFiles,
     getApprenantByFormation,
     getFormationByApprenant,
@@ -27,6 +28,8 @@ const router = express.Router()
 
 
 router.get('/courses/', getCourses);
+
+router.get('/coursesByRatings/', getCoursesByRating);
 
 
 router.get('/courses/coursesByFormer/:idF',getCoursesByFormer);

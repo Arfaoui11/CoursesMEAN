@@ -47,8 +47,13 @@ const upload = multer({ storage: storage })
 
 
 const getCourses = async (req, res) => {
-    const courses = await Formation.find({}).sort({"ratings": -1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
-    //console.log(courses)
+    const courses = await Formation.find({}).sort({"createdAt":-1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
+
+    res.status(200).json(courses)
+}
+const getCoursesByRating = async (req, res) => {
+    const courses = await Formation.find({}).sort({"ratings":-1}).populate('userF comments').populate({path:'courseApprenants',populate:'course userA' })
+
     res.status(200).json(courses)
 }
 
@@ -142,7 +147,7 @@ const search = async (req, res) => {
     const {key} = req.body;
 
 
-    const course = await Formation.find({$or:[{level:{ $regex: key, $options: 'i' }},{domain : { $regex: key, $options: 'i' }},{title : { $regex: key, $options: 'i' }}]});
+    const course = await Formation.find({$or:[{level:{ $regex: key, $options: 'i' }},{domain : { $regex: key, $options: 'i' }},{title : { $regex: key, $options: 'i' }}]}).sort({costs : order});
 
 
 
@@ -738,6 +743,7 @@ module.exports = {
     deleteCourse,
     updateCourse,
     searchCourses,
+    getCoursesByRating,
     search,
     CheckOutCourses,
     getFormationByApprenant,
