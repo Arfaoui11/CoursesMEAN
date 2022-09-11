@@ -348,7 +348,7 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
         return res.status(400).json({error: 'No such Course'})
     }
 
-    const files = req.files
+    const files = req.files;
     let filesPaths = [];
     const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 

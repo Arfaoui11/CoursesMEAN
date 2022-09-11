@@ -245,17 +245,19 @@ const updateUser = async (req, res) => {
     const { id } = req.params;
     const {firstName,lastName, profession,email,age,phoneNumber} = req.body;
 
-    const file = req.file;
-    if (!file) return res.status(400).send('No image in the request');
 
-    const fileName = req.file.filename;
-    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+    const file = req.file;
+
+
+
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({error: 'No such User'})
     }
-    if (file !== '')
+    if (typeof file !== 'undefined')
     {
+        const fileName = req.file.filename;
+        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
         const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,file : `${basePath}${fileName}` ,profession,age,phoneNumber});
         if (!formateur) {
             return res.status(400).json({error: 'No such User'})
@@ -264,6 +266,7 @@ const updateUser = async (req, res) => {
         res.status(200).json(formateur)
     }else
     {
+
         const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,profession,age,phoneNumber});
         if (!formateur) {
             return res.status(400).json({error: 'No such User'})
