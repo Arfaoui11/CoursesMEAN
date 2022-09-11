@@ -737,14 +737,15 @@ const CheckOutCourses = async (req, res) => {
         await  mailers.mail("mahdijr2015@gmail.com", "Your order’s been processed","Thanks for choosing to learn with us — we’re excited to be on your journey with you.\n", './public/uploads/shopping_cart_500px.png',
             '<table style="border-bottom: 1px solid #ddd;">' +
             '<thead>' +
-            '<th> Course name </th>' +
+
             '<th> Total price </th>' +
             '</thead>' +
             '<tr >' +
-            '<td>' + order.orderDetails.course + '</td>' +
+            
             '<td>' + order.total + '</td>' +
             '</tr>' +
-            '</table>');
+            '</table> ' +
+            '<img src="public/uploads/shopping_cart_500px.png" alt="not found">');
 
         console.log(order);
         res.status(200).json(newOrder);
