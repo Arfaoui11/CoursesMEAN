@@ -182,7 +182,7 @@ const getUser = async (req, res) => {
         return res.status(404).json({error: 'No such User'})
     }
 
-    const course = await User.findById(id).select('-password')
+    const course = await User.findById(id).select('-password');
 
     if (!course) {
         return res.status(404).json({error: 'No such User'})
@@ -239,6 +239,44 @@ const createUser = async (req, res) => {
         res.status(400).json({ error: error.message })
     }
 }
+
+// update a formation
+const updateUser = async (req, res) => {
+    const { id } = req.params;
+    const {firstName,lastName, profession,email,age,phoneNumber} = req.body;
+
+    const file = req.file;
+    if (!file) return res.status(400).send('No image in the request');
+
+    const fileName = req.file.filename;
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({error: 'No such User'})
+    }
+    if (file !== '')
+    {
+        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,file : `${basePath}${fileName}` ,profession,age,phoneNumber});
+        if (!formateur) {
+            return res.status(400).json({error: 'No such User'})
+        }
+
+        res.status(200).json(formateur)
+    }else
+    {
+        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,profession,age,phoneNumber});
+        if (!formateur) {
+            return res.status(400).json({error: 'No such User'})
+        }
+
+        res.status(200).json(formateur)
+    }
+
+
+
+}
+
+
 
 /*cron.schedule('1-1 * * * * *',  async function() {
 
@@ -456,24 +494,6 @@ const searchUser = async (req, res) => {
 
 }
 
-// update a formation
-const updateUser = async (req, res) => {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such User'})
-    }
-
-    const formateur = await User.findOneAndUpdate({_id: id}, {
-        ...req.body
-    })
-
-    if (!formateur) {
-        return res.status(400).json({error: 'No such User'})
-    }
-
-    res.status(200).json(formateur)
-}
 
 
 const desaffectionApp = async (req, res) => {

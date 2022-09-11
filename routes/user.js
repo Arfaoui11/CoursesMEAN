@@ -52,6 +52,6 @@ router.delete('/user/:id', deleteUser)
 router.delete('/user/desaffection/:idA/:idF', desaffectionApp)
 
 // UPDATE a formation
-router.patch('/user/:id', updateUser)
+router.patch('/user/:id',upload.single('file') , updateUser)
 
 module.exports = router;
