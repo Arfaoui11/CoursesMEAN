@@ -147,7 +147,7 @@ const search = async (req, res) => {
     const {key} = req.body;
 
 
-    const course = await Formation.find({$or:[{level:{ $regex: key, $options: 'i' }},{domain : { $regex: key, $options: 'i' }},{title : { $regex: key, $options: 'i' }}]}).sort({costs : order});
+    const course = await Formation.find({$or:[{level:{ $regex: key, $options: 'i' }},{domain : { $regex: key, $options: 'i' }},{title : { $regex: key, $options: 'i' }}]}).sort({costs:-1});
 
 
 
@@ -390,6 +390,7 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
 
 const assignApprenantToCourse = async (req, res) => {
     // find out which post you are commenting
+
     const {idF,idA} = req.params;
 
 
@@ -397,8 +398,8 @@ const assignApprenantToCourse = async (req, res) => {
 
     // get the comment text and record post id
     try {
-        const apprenant = await User.findById(idA)
-        const formation = await Formation.findById(idF).populate('userF')
+        const apprenant = await User.findById(idA);
+        const formation = await Formation.findById(idF).populate('userF');
 
 
 
@@ -412,7 +413,7 @@ const assignApprenantToCourse = async (req, res) => {
        // const nbrapp = await getNbrApprenantByFormation({id : formation._id},{})
        // console.log(nbrapp)
 
-        const courseApp = await CourseApprenant({course:formation._id,userA:apprenant._id})
+        const courseApp = await CourseApprenant({course:formation._id,userA:apprenant._id});
         await courseApp.save();
 
 
@@ -428,7 +429,7 @@ const assignApprenantToCourse = async (req, res) => {
 
         // save and redirect...
         //send email to anather mail
-        mailers.mail("mahdijr2015@gmail.com","Congratulations Mr's : " + apprenant.lastName + " " + apprenant.firstName + " you have added new Courses", " Former Name : "+formation.userF.lastName,formation.image)
+        mailers.mail("mahdijr2015@gmail.com","Congratulations Mr's : " + apprenant.lastName + " " + apprenant.firstName + " you have added new Courses", " Former Name : "+formation.userF.lastName,formation.image);
 
        // pdfa(formation,apprenant,'public/certif/Certif.pdf','public/certif/output.pdf');
 
@@ -690,6 +691,40 @@ const CheckOutCourses = async (req, res) => {
                 await order.save();
 
                 console.log(" Congratulations  : " + user.lastName + " " + user.firstName + " you have added new  Courses  "+course.title);
+
+
+                const apprenant = await User.findById(user.id);
+                const formation = await Formation.findById(course.id).populate('userF');
+
+
+
+
+                if (apprenant.type.toString() !== "STUDENT")
+                {
+                    res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
+                }
+
+
+                // const nbrapp = await getNbrApprenantByFormation({id : formation._id},{})
+                // console.log(nbrapp)
+
+                const courseApp = await CourseApprenant({course:formation._id,userA:apprenant._id});
+                await courseApp.save();
+
+
+
+
+                apprenant.courseApprenants.push(courseApp);
+
+                formation.courseApprenants.push(courseApp);
+
+                await apprenant.save();
+                await formation.save();
+
+
+
+
+
                 await  mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + user.lastName + " " + user.firstName + " you have added new  Courses Title : "+course.title + "Price : " + course.costs +" .",course.title, course.image);
 
 

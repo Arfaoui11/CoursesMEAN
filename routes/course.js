@@ -68,9 +68,9 @@ router.post('/checkout/:id',CheckOutCourses)
 
 //assign apprenant to course
 
-router.post('/courses/:idF/:idA', assignApprenantToCourse)
+router.post('/courses/:idF/:idA', assignApprenantToCourse);
 
-router.get('/courses/:idC/:idU', getCertifcateByCoursesAndUser)
+router.get('/courses/:idC/:idU', getCertifcateByCoursesAndUser);
 
 
 router.get('/video/:url', function(req, res) {
