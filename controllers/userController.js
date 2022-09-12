@@ -126,7 +126,7 @@ const loginRequest = async (req,res) => {
 
     if (!user)
     {
-        return res.status(404).json({error: 'No such User Found'})
+        return res.status(404).json({message: 'No such User Found'})
     }
 
 
@@ -145,13 +145,13 @@ const loginRequest = async (req,res) => {
 
         if (user.verified === false)
         {
-            return res.status(404).json({error: 'please verify your account '})
+            return res.status(404).json({message:'please verify your account '})
         }
 
         res.status(200).json({user : user , token : token});
     }else
     {
-        res.status(404).json('Password Wrong !!!!')
+        res.status(404).json({message:'Password Wrong !!!!'})
     }
 
 
@@ -179,13 +179,13 @@ const getUser = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such User'})
+        return res.status(404).json({message: 'No such User'})
     }
 
     const course = await User.findById(id).select('-password');
 
     if (!course) {
-        return res.status(404).json({error: 'No such User'})
+        return res.status(404).json({message: 'No such User'})
     }
 
     res.status(200).json(course)
@@ -212,7 +212,7 @@ const createUser = async (req, res) => {
         User.findOne({email}).exec(async (err,users) => {
 
             if (users) {
-                return res.status(400).json({error : " User with this email already exists. "})
+                return res.status(400).json({message : " User with this email already exists. "})
             }
 
             let user = await User.create({firstName,lastName, email,isAdmin,file : `${basePath}${fileName}` ,profession, type,state, password : bcrypt.hashSync(req.body.password,10),salary,tarifHoraire,age,phoneNumber} );
@@ -236,14 +236,14 @@ const createUser = async (req, res) => {
 
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ message: error.message })
     }
 }
 
 // update a formation
 const updateUser = async (req, res) => {
     const { id } = req.params;
-    const {firstName,lastName, profession,email,age,phoneNumber} = req.body;
+    const {firstName,lastName,password, profession,email,age,phoneNumber} = req.body;
 
 
     const file = req.file;
@@ -252,24 +252,24 @@ const updateUser = async (req, res) => {
 
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such User'})
+        return res.status(400).json({message: 'No such User'})
     }
     if (typeof file !== 'undefined')
     {
         const fileName = req.file.filename;
         const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
-        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,file : `${basePath}${fileName}` ,profession,age,phoneNumber});
+        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,file : `${basePath}${fileName}`,password : bcrypt.hashSync(password,10) ,profession,age,phoneNumber});
         if (!formateur) {
-            return res.status(400).json({error: 'No such User'})
+            return res.status(400).json({message: 'No such User'})
         }
 
         res.status(200).json(formateur)
     }else
     {
 
-        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,profession,age,phoneNumber});
+        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName,password : bcrypt.hashSync(password,10), email,profession,age,phoneNumber});
         if (!formateur) {
-            return res.status(400).json({error: 'No such User'})
+            return res.status(400).json({message: 'No such User'})
         }
 
         res.status(200).json(formateur)
@@ -356,7 +356,7 @@ const createAccountAdmin = async () => {
                 mailers.mail(email,'Account Admin Created With Success',
                     "Udacity Academy Website",user.file);
 
-                console.log("Account Create With Success");
+
             }
 
         })
@@ -382,7 +382,7 @@ const createAccountAdmin = async () => {
         User.findOne({email}).exec(async (err,user) => {
             if(err)
             {
-                return res.status(400).json({error: 'Incorrect User'});
+                return res.status(400).json({message: 'Incorrect User'});
             }
             console.log(user);
             const token = jwt.sign({email},process.env.JWT_ACC_ACTIVAT,{expiresIn:'20m'});
@@ -407,14 +407,14 @@ const activatedAccount = async (req,res) => {
         jwt.verify(token,process.env.JWT_ACC_ACTIVAT,function (err,decodedToken) {
             if (err)
             {
-                return res.status(400).json({error: 'Incorrect orExpired link'});
+                return res.status(400).json({message: 'Incorrect orExpired link'});
             }
             const {lastName, email,password} = decodedToken;
 
             User.findOne({email}).exec(async (err,user) => {
                 if(err)
                 {
-                    return res.status(400).json({error: 'Incorrect User'});
+                    return res.status(400).json({message: 'Incorrect User'});
                 }
                 const userVerif = await User.findOneAndUpdate({_id: user.id}, {
                     verified:true
@@ -426,7 +426,7 @@ const activatedAccount = async (req,res) => {
         })
     }else
     {
-        return res.status(400).json({error: 'Something went wrong  !!!!'});
+        return res.status(400).json({message: 'Something went wrong  !!!!'});
     }
 }
 
@@ -437,13 +437,13 @@ const deleteUser = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such User'})
+        return res.status(400).json({message: 'No such User'})
     }
 
     const Formateur = await User.findOneAndDelete({_id: id})
 
     if(!Formateur) {
-        return res.status(400).json({error: 'No such User'})
+        return res.status(400).json({message: 'No such User'})
     }
 
     res.status(200).json(Formateur)
@@ -464,7 +464,7 @@ const searchUser = async (req, res) => {
         const users = await User.find({$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }}]});
 
         if (!users) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
         res.status(200).json(users)
@@ -476,7 +476,7 @@ const searchUser = async (req, res) => {
         const users = await User.find({$and:[ {$or:[{firstName:{ $regex: lastName , $options: 'i' }},{lastName:{ $regex: lastName, $options: 'i' }},{email : { $regex: lastName, $options: 'i' }},{phoneNumber:{ $regex: lastName, $options: 'i' }}]} ,{state : { $regex: state, $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }}]});
 
         if (!users) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
         res.status(200).json(users)
@@ -486,7 +486,7 @@ const searchUser = async (req, res) => {
         const users = await User.find({$and:[{state : { $regex: state, $options: 'i' }},{type : { $regex: type+ "", $options: 'i' }},{verified : verified}]});
 
         if (!users) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
         res.status(200).json(users);
@@ -549,7 +549,7 @@ const desaffectionApp = async (req, res) => {
 
         }
         if(!courseApprenant) {
-            return res.status(400).json({error: 'No such CourseApprenant'})
+            return res.status(400).json({message: 'No such CourseApprenant'})
         }
 
         res.status(200).json(courseApprenant);
@@ -557,13 +557,13 @@ const desaffectionApp = async (req, res) => {
 
 
         if (!course.quizzes) {
-            return res.status(400).json({error: 'No such Quiz have in this courses'})
+            return res.status(400).json({message: 'No such Quiz have in this courses'})
         }
 
       //  res.status(200).json(course)
 
     }catch (error) {
-        return  res.status(400).json({ error: error.message })
+        return  res.status(400).json({ message: error.message })
     }
 
 

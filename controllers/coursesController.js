@@ -62,14 +62,14 @@ const getCourse = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     const course = await Formation.findById(id).populate('userF quizzes').populate({path:'courseApprenants',populate:'course userA' }).populate({path:'comments',populate:'course user' })
 
 
     if (!course) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     res.status(200).json(course)
@@ -90,7 +90,7 @@ const searchCourses = async (req, res) => {
         const course = await Formation.find({title : { $regex: title+ "" , $options: 'i' },nbrHours:{$gte:nb-5,$lte:nb}}).sort({costs : order});
 
         if (!course) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
 
@@ -102,7 +102,7 @@ const searchCourses = async (req, res) => {
         const course = await Formation.find({$and:[{domain : { $regex: domain + "", $options: 'i' }},{nbrHours:{$gte:nb-5,$lte:nb}},{title : { $regex: title + "", $options: 'i' }}]}).sort({costs : order});
 
         if (!course) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
         res.status(200).json(course)
@@ -111,7 +111,7 @@ const searchCourses = async (req, res) => {
         const course = await Formation.find({$and:[{level : { $regex: level + "", $options: 'i' }},{title : { $regex: title + "", $options: 'i' }},{nbrHours:{$gte:nb-5,$lte:nb}}]}).sort({costs : order});
 
         if (!course) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
 
@@ -121,7 +121,7 @@ const searchCourses = async (req, res) => {
         const course = await Formation.find({$and:[{level:{ $regex: level + "", $options: 'i' }},{domain : { $regex: domain + "", $options: 'i' }},{title : { $regex: title , $options: 'i' }},{nbrHours:{$gte:nb-5,$lte:nb}}]}).sort({costs : order});
 
         if (!course) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
 
@@ -133,7 +133,7 @@ const searchCourses = async (req, res) => {
         const course = await Formation.find({}).sort({costs : order});
 
         if (!course) {
-            return res.status(404).json({error: 'No such users with this search'})
+            return res.status(404).json({message: 'No such users with this search'})
         }
 
 
@@ -152,7 +152,7 @@ const search = async (req, res) => {
 
 
     if (!course) {
-        return res.status(404).json({error: 'No such Course in this search'})
+        return res.status(404).json({message: 'No such Course in this search'})
     }
 
     res.status(200).json(course)
@@ -162,7 +162,7 @@ const getFormationByApprenant = async (req, res) => {
     const {idA} = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(idA)) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     const ids = [];
@@ -179,7 +179,7 @@ const getFormationByApprenant = async (req, res) => {
 
 
     if (!list) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     res.status(200).json(list)
@@ -189,7 +189,7 @@ const getApprenantByFormation = async (req, res) => {
     const {idC} = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(idC)) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     const ids = [];
@@ -206,7 +206,7 @@ const getApprenantByFormation = async (req, res) => {
 
 
     if (!list) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     res.status(200).json(list)
@@ -217,7 +217,7 @@ const countCoursesByFormer = async (req, res) => {
     const { id ,dateD,dateF } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     let nbr = 0;
@@ -233,7 +233,7 @@ const countCoursesByFormer = async (req, res) => {
 
 
     if (!NbrcourseByFormer) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     res.status(200).json({count :NbrcourseByFormer })
@@ -243,7 +243,7 @@ const getNbrApprenantByFormation = async (req, res) => {
     const { id  } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
 
@@ -254,7 +254,7 @@ const getNbrApprenantByFormation = async (req, res) => {
 
 
     if (!course) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     res.status(200).json({count :course.courseApprenants.length })
@@ -267,7 +267,7 @@ const getCoursesByFormer = async (req, res) => {
 
 
     if (!mongoose.Types.ObjectId.isValid(idF)) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
 
@@ -277,7 +277,7 @@ const getCoursesByFormer = async (req, res) => {
 
 
     if (!courses) {
-        return res.status(404).json({error: 'No such Course'})
+        return res.status(404).json({message: 'No such Course'})
     }
 
     res.status(200).json(courses)
@@ -299,7 +299,7 @@ const  createCourse =  async (req, res) => {
         const course = await Formation.create({title, domain,level,  start,end,nbrHours,lieu,nbrMaxParticipant,costs})
         res.status(200).json(course)
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ message: error.message })
     }
 }
 const createCourseAndAssignToFormer = async (req, res) => {
@@ -321,7 +321,7 @@ const createCourseAndAssignToFormer = async (req, res) => {
 
         if (former.type.toString() !== "FORMER")
         {
-            res.status(404).json({ error: 'Assign to Courses former not Other type' })
+            res.status(404).json({ message: 'Assign to Courses former not Other type' })
         }
         const course = await Formation({title, domain,level,prerequisites,skills,image : `${basePath}${fileName}` , start,end,nbrHours,lieu,nbrMaxParticipant,costs,userF: id})
 
@@ -335,7 +335,7 @@ const createCourseAndAssignToFormer = async (req, res) => {
         await former.save();
         res.status(200).json(course)
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ message: error.message })
     }
 
 }
@@ -345,7 +345,7 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such Course'})
+        return res.status(400).json({message: 'No such Course'})
     }
 
     const files = req.files;
@@ -359,7 +359,7 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
         })
     }else
     {
-        return res.status(400).json({error: 'No such Files'})
+        return res.status(400).json({message: 'No such Files'})
     }
     // get the comment text and record post id
     try {
@@ -373,7 +373,7 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
         )
 
         if (!course) {
-            return res.status(500).json({error: 'the Courses cannot be updated ! '})
+            return res.status(500).json({message: 'the Courses cannot be updated ! '})
         }
 
 
@@ -381,7 +381,7 @@ const updatreCourseAndAssignToFormer = async (req, res) => {
         res.status(200).json(course)
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ message: error.message })
     }
 
 }
@@ -406,7 +406,7 @@ const assignApprenantToCourse = async (req, res) => {
 
         if (apprenant.type.toString() !== "STUDENT")
         {
-            res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
+            res.status(404).json({ message: 'Assign to Courses STUDENT not Other type' })
         }
 
 
@@ -436,7 +436,7 @@ const assignApprenantToCourse = async (req, res) => {
 
         res.status(200).json(courseApp)
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ message: error.message })
     }
 
 }
@@ -513,13 +513,13 @@ const deleteCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such Course'})
+        return res.status(400).json({message: 'No such Course'})
     }
 
     const course = await Formation.findOneAndDelete({_id: id})
 
     if(!course) {
-        return res.status(400).json({error: 'No such Course'})
+        return res.status(400).json({message: 'No such Course'})
     }
 
     res.status(200).json(course)
@@ -530,7 +530,7 @@ const getCertifcateByCoursesAndUser = async (req, res) => {
     const { idC,idU } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(idC)) {
-        return res.status(400).json({error: 'No such Course'})
+        return res.status(400).json({message: 'No such Course'})
     }
 
     const user = await User.findById(idU)
@@ -539,7 +539,7 @@ const getCertifcateByCoursesAndUser = async (req, res) => {
     const certif = await Certificate.findOne({'user':user.id,'course':course.id })
 
     if(!certif) {
-        return res.status(400).json({error: 'No such Course'})
+        return res.status(400).json({message: 'No such Course'})
     }
 
     res.status(200).json(certif)
@@ -550,7 +550,7 @@ const updateCourse = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such Course'})
+        return res.status(400).json({message: 'No such Course'})
     }
 
     const course = await Formation.findOneAndUpdate({_id: id}, {
@@ -558,7 +558,7 @@ const updateCourse = async (req, res) => {
     })
 
     if (!course) {
-        return res.status(400).json({error: 'No such Course'})
+        return res.status(400).json({message: 'No such Course'})
     }
 
     res.status(200).json(course)
@@ -640,7 +640,7 @@ const CheckOutCourses = async (req, res) => {
 
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'No such User'})
+        return res.status(400).json({message: 'No such User'})
     }
 
     try {
@@ -649,7 +649,7 @@ const CheckOutCourses = async (req, res) => {
         const user = await User.findById(id);
 
         if(!user) {
-            return res.status(400).json({error: 'No such User'})
+            return res.status(400).json({message: 'No such User'})
         }
         let totalCost = 0 ;
 
@@ -701,7 +701,7 @@ const CheckOutCourses = async (req, res) => {
 
                 if (apprenant.type.toString() !== "STUDENT")
                 {
-                    res.status(404).json({ error: 'Assign to Courses STUDENT not Other type' })
+                    res.status(404).json({ message: 'Assign to Courses STUDENT not Other type' })
                 }
 
 
