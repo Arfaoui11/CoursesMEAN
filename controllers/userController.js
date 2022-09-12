@@ -145,7 +145,7 @@ const loginRequest = async (req,res) => {
 
         if (user.verified === false)
         {
-            return res.status(404).json({message:'please verify your account'})
+            return res.status(404).json({message:'Please verify your email account'})
         }
 
         res.status(200).json({user : user , token : token});
