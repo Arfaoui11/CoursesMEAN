@@ -608,7 +608,7 @@ const CertifactionStudents = async (req, res) => {
                    await pdfa(array22, array11, 'public/certif/Certif.pdf', 'public/uploads/'+array11.id+array22.id+'.pdf');
 
                    console.log(" Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ")
-                   mailers.mail("mahdijr2015@gmail.com", " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, './public/uploads/'+array11.id+array22.id+'.pdf')
+                   mailers.mail(array11.email, " Congratulations Mr's : " + array11.lastName + " " + array11.firstName + " you have finished your Courses  ", array22.userF.lastName, './public/uploads/'+array11.id+array22.id+'.pdf')
 
 
 

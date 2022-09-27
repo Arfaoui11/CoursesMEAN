@@ -254,7 +254,7 @@ const updateUser = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({message: 'No such User'})
     }
-    if (typeof file !== 'undefined')
+    if (typeof file !== 'undefined' && typeof password != 'undefined')
     {
         const fileName = req.file.filename;
         const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
@@ -263,11 +263,33 @@ const updateUser = async (req, res) => {
             return res.status(400).json({message: 'No such User'})
         }
 
-        res.status(200).json(formateur)
-    }else
+        res.status(200).json(formateur);
+    }else if(typeof file !== 'undefined' && typeof password == 'undefined')
+    {
+        console.log(password);
+        const fileName = req.file.filename;
+        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,file : `${basePath}${fileName}` ,profession,age,phoneNumber});
+        if (!formateur) {
+            return res.status(400).json({message: 'No such User'})
+        }
+
+        res.status(200).json(formateur);
+    }
+
+    else if( typeof password != 'undefined')
     {
 
         const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName,password : bcrypt.hashSync(password,10), email,profession,age,phoneNumber});
+
+        if (!formateur) {
+            return res.status(400).json({message: 'No such User'})
+        }
+
+        res.status(200).json(formateur)
+    } else
+    {
+        const formateur = await User.findOneAndUpdate({_id: id}, {firstName,lastName, email,profession,age,phoneNumber});
         if (!formateur) {
             return res.status(400).json({message: 'No such User'})
         }
